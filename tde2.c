@@ -35,18 +35,6 @@ Paciente pacientesSistema[100];
 int totalUsuarios = 0;
 Usuario usuarioLogado;
 
-int main() {
-    system("chcp 65001 > nul");
-    SetConsoleOutputCP(65001);
-    SetConsoleCP(65001);
-    setlocale(LC_ALL, "Portuguese_Brazil.65001");
-    
-    system("title SISTEMA HOSPITALAR");
-    system("mode con: cols=120 lines=30");
-    system("color 0F");
-        
-    credenciais();
-}
 void credenciais() {
     char login[30];
     char* senha; //Ponteiro para usar a função
@@ -93,9 +81,7 @@ void credenciais() {
         printf("DEBUG: Senha digitada: '%s'\n", senha);
         
         for (int i = 0; i < totalUsuarios; i++) {
-            printf("DEBUG: Comparando com usuario[%d]: login='%s' senha='%s'\n", 
-                   i, usuariosSistema[i].login, usuariosSistema[i].senha);
-            
+            printf("DEBUG: Comparando com usuario[%d]: login='%s' senha='%s'\n", i, usuariosSistema[i].login, usuariosSistema[i].senha);      
             if (strcmp(login, usuariosSistema[i].login) == 0 && 
                 strcmp(senha, usuariosSistema[i].senha) == 0) {
                 
@@ -322,4 +308,17 @@ void menuADM() {
                 system("pause");
         }
     } while (opcao != 0);
+}
+
+int main() {
+    system("chcp 65001 > nul");
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+    setlocale(LC_ALL, "Portuguese_Brazil.65001");
+    
+    system("title SISTEMA HOSPITALAR");
+    system("mode con: cols=120 lines=30");
+    system("color 0F");
+        
+    credenciais();
 }

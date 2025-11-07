@@ -1,0 +1,19 @@
+{
+  "usuarios": [
+    {
+      "login": "admin",
+      "senha": "adm123",
+      "tipo": "admin"
+    },
+    {
+      "login": "medico",
+      "senha": "med123",
+      "tipo": "medico"
+    },
+    {
+      "login": "enfermeiro",
+      "senha": "enf123",
+      "tipo": "enfermeiro"
+    }
+  ]
+}
