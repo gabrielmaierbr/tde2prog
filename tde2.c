@@ -22,11 +22,18 @@ typedef struct {
 } Usuario;
 
 //Declaração das Funções
-void menuADM();
 void credenciais();
 void salvarUsuariosJSON();
 void lerUsuariosJSON();
 char* lerSenhaComMascara();
+void menuADM(), menuMEDICO(), menuENFERMEIRO(), menuRECEPCAO();
+void gerenciarUsuarios();
+void cadastrarUsuario(), cadastrarMedico(), cadastrarEnfermeiro(), cadastrarRecepcionista();
+void excluirUsuario(), excluirMedico(), excluirEnfermeiro(), excluirRecepcionista();
+void gerenciarPacientes(), cadastrarPaciente(), excluirPaciente(), verPacientes();
+void gerenciarLeitos(), criarLeito(), excluirLeito();
+void gerenciarPacientesNosLeitos(), alocarPacienteAoLeito(), tirarPacienteDoLeito();
+void darAlta();
 
 //Variáveis globais
 char titulo[50] = "SISTEMA HOSPITALAR";
@@ -94,10 +101,9 @@ void credenciais() {
                 if (strcmp(usuarioLogado.tipo, "admin") == 0) {
                     menuADM();
                 } else if (strcmp(usuarioLogado.tipo, "medico") == 0) {
-                    printf("menuMEDICO()\n");
-                    system("pause");
+                    menuMEDICO();
                 } else if (strcmp(usuarioLogado.tipo, "enfermeiro") == 0) {
-                    printf("menuENFERMEIRO()\n");
+                    menuENFERMEIRO();
                     system("pause");
                 }
                 break;
@@ -267,6 +273,230 @@ char* lerSenhaComMascara() {
     return senha;
 }
 
+//--------------------------- Gerenciar Usuários ---------------------------
+
+void gerenciarUsuarios() {
+    int opcao;
+    while (1) {
+        system("cls");
+        printf(" [-------------- GERENCIAR USUÁRIO --------------]\n\n");
+        printf("Opções [0 para voltar]:\n\n");
+        printf(" 1- Cadastrar Usuário\n");
+        printf(" 2- Excluir Usuário\n");
+        printf("\n Digite a opção: ");
+        scanf("%d",&opcao);
+        
+        if (opcao == 1) {
+            cadastrarUsuario();
+        } else if (opcao == 2) {
+            excluirUsuario();
+        } else if (opcao == 0) {
+            break;
+        } else {
+            printf("\n Opção inválida\n\n");
+            system("pause");
+        }
+    }
+}
+
+void cadastrarUsuario() {
+    int opcao;
+    while(1) {
+        system("cls");
+        printf(" [-------------- CADASTRAR USUÁRIO --------------]\n\n");
+        printf("Qual usuário deseja cadastrar [0 para voltar]?\n\n");
+        printf(" 1- Médico\n");
+        printf(" 2- Enfermeiro\n");
+        printf(" 3- Recepcionista\n");
+        printf("\n Digite a opção: ");
+
+        scanf("%d",&opcao);
+
+        if (opcao==1) {
+            cadastrarMedico();
+        } else if (opcao==2) {
+            cadastrarEnfermeiro();
+        } else if (opcao==3) {
+            cadastrarRecepcionista();
+        } else if (opcao==0) {
+            break;
+        } else {
+            printf("\n Opção inválida\n\n");
+            system("pause");
+        }
+    }
+}
+
+void cadastrarMedico() {
+
+}
+
+void cadastrarEnfermeiro() {
+
+}
+
+void cadastrarRecepcionista() {
+
+}
+
+void excluirUsuario() {
+    int opcao;
+    while(1) {
+        system("cls");
+        printf(" [-------------- EXCLUIR USUÁRIO --------------]\n\n");
+        printf("Qual usuário deseja excluir [0 para voltar]?\n\n");
+        printf(" 1- Médico\n");
+        printf(" 2- Enfermeiro\n");
+        printf(" 3- Recepcionista\n");
+        printf("\n Digite a opção: ");
+        scanf("%d",&opcao);
+
+        if (opcao==1) {
+            excluirMedico();
+        } else if (opcao==2) {
+            excluirEnfermeiro();
+        } else if (opcao==3) {
+            excluirRecepcionista();
+        } else if (opcao==0) {
+            break;
+        } else {
+            printf("\n Opção inválida\n\n");
+            system("pause");
+        }
+    }
+}
+
+void excluirMedico() {
+
+}
+
+void excluirEnfermeiro() {
+
+}
+
+void excluirRecepcionista() {
+
+}
+
+//--------------------------- Gerenciar Pacientes ---------------------------
+
+void gerenciarPacientes() {
+    int opcao;
+    while (1) {
+        system("cls");
+        printf(" [-------------- GERENCIAR PACIENTES --------------]\n\n");
+        printf("Opções [0 para voltar]:\n\n");
+        printf(" 1- Cadastrar Paciente\n");
+        printf(" 2- Excluir Paciente\n");
+        printf(" 3- Ver Pacientes\n");
+        printf("\n Digite a opção: ");
+        scanf("%d",&opcao);
+
+        if (opcao==1) {
+            cadastrarPaciente();
+        } else if (opcao==2) {
+            excluirPaciente();
+        } else if (opcao==3) {
+            verPacientes();
+        } else if (opcao==0) {
+            break;
+        } else {
+            printf("\n Opção Inválida\n\n");
+            system("pause");
+        }
+    }
+}
+
+void cadastrarPaciente() {
+
+}
+
+void excluirPaciente() {
+
+}
+
+void verPacientes() {
+
+}
+
+//--------------------------- Gerenciar Leitos ---------------------------
+
+void gerenciarLeitos() {
+    int opcao;
+    while (1) {
+        system("cls");
+        printf(" [-------------- GERENCIAR LEITOS --------------]\n\n");
+        printf("Opções [0 para voltar]:\n\n");
+        printf(" 1- Criar Leito\n");
+        printf(" 2- Excluir Leito\n");
+        printf(" 3- Gerenciar Pecientes nos Leitos\n");
+        printf("\n Digite a opção: ");
+        scanf("%d",&opcao);
+
+        if (opcao==1) {
+            criarLeito();
+        } else if (opcao==2) {
+            excluirLeito();
+        } else if (opcao==3) {
+            gerenciarPacientesNosLeitos();
+        } else if (opcao==0) {
+            break;
+        } else {
+            printf("\n Opção Inválida\n\n");
+            system("pause");
+        }
+    }
+}
+
+void criarLeito() {
+
+}
+
+void excluirLeito() {
+
+}
+
+void gerenciarPacientesNosLeitos() {
+    int opcao;
+    while(1) {
+        system("cls");
+        printf(" [--------- GERENCIAR PACIENTES NOS LEITOS ---------]\n\n");
+        printf("O que deseja fazer [0 para voltar]?\n\n");
+        printf(" 1- Alocar Paciente ao Leito\n");
+        printf(" 2- Tirar Paciente do leito\n");
+        printf("\n Digite a opção: ");
+        scanf("%d",&opcao);
+
+        if (opcao==1) {
+            alocarPacienteAoLeito();
+        } else if (opcao==2) {
+            tirarPacienteDoLeito();
+        } else if (opcao==0) {
+            break;
+        } else {
+            printf(" \nOpção Inválida\n\n");
+            system("pause");
+        }
+    }
+
+}
+
+void alocarPacienteAoLeito() {
+
+}
+
+void tirarPacienteDoLeito() {
+
+}
+
+//--------------------------- Exclusivo do Médico ---------------------------
+
+void darAlta() {
+
+}
+
+//---------------------------------- MENUS ----------------------------------
+
 void menuADM() {
     int opcao;
     
@@ -275,8 +505,7 @@ void menuADM() {
         printf(" [---------- %s - MENU ADMINISTRADOR ----------]\n\n", titulo);
         printf(" 1- Gerenciar Usuários\n");
         printf(" 2- Gerenciar Pacientes\n");
-        printf(" 3- Arquivos Locais\n");
-        printf(" 4- Relatórios\n");
+        printf(" 3- Gerenciar Leitos\n");
         printf(" 0- Sair\n");
         printf("\n Digite a opção: ");
         scanf("%d", &opcao);
@@ -288,26 +517,119 @@ void menuADM() {
                 credenciais();
                 break;
             case 1:
-                printf("\n Gerenciar Usuários - Em desenvolvimento\n");
-                system("pause");
+                gerenciarUsuarios();
                 break;
             case 2:
-                printf("\n Gerenciar Pacientes - Em desenvolvimento\n");
-                system("pause");
+                gerenciarPacientes();
                 break;
             case 3:
-                printf("\n Arquivos Locais - Em desenvolvimento\n");
-                system("pause");
-                break;
-            case 4:
-                printf("\n Relatórios - Em desenvolvimento\n");
-                system("pause");
+                gerenciarLeitos();
                 break;
             default:
                 printf("\n Opção inválida\n\n");
                 system("pause");
         }
     } while (opcao != 0);
+}
+
+void menuMEDICO() {
+    int opcao;
+
+    do {
+        system("cls");
+        printf(" [---------- %s - MENU MÉDICO(A) ----------]\n\n", titulo);
+        printf(" 1- Ver Pacientes\n");
+        printf(" 2- Dar Alta\n");
+        printf(" 0- Sair\n");
+        printf("\n Digite a opção: ");
+        scanf("%d", &opcao);
+        
+        switch(opcao) {
+            case 0:
+                printf("\n Saindo do sistema...\n");
+                system("pause");
+                credenciais();
+                break;
+            case 1:
+                verPacientes();
+                break;
+            case 2:
+                darAlta();
+                break;
+            default:
+                printf("\n Opção inválida\n\n");
+                system("pause");
+        }
+    } while (opcao != 0);
+
+}
+
+void menuENFERMEIRO() {
+        int opcao;
+
+    do {
+        system("cls");
+        printf(" [---------- %s - MENU ENFERMEIRO(A) ----------]\n\n", titulo);
+        printf(" 1- Ver Pacientes\n");
+        printf(" 2- Gerenciar pacientes nos Leitos\n");
+        printf(" 0- Sair\n");
+        printf("\n Digite a opção: ");
+        scanf("%d", &opcao);
+        
+        switch(opcao) {
+            case 0:
+                printf("\n Saindo do sistema...\n");
+                system("pause");
+                credenciais();
+                break;
+            case 1:
+                verPacientes();
+                break;
+            case 2:
+                gerenciarPacientesNosLeitos();
+                break;
+            default:
+                printf("\n Opção inválida\n\n");
+                system("pause");
+        }
+    } while (opcao != 0);
+
+}
+
+void menuRECEPCAO() {
+    int opcao;
+
+    do {
+        system("cls");
+        printf(" [---------- %s - MENU RECEPÇÃO ----------]\n\n", titulo);
+        printf(" 1- Cadastrar Paciente\n");
+        printf(" 2- Excluir Paciente\n");
+        printf(" 3- Ver Pacientes");
+        printf(" 0- Sair\n");
+        printf("\n Digite a opção: ");
+        scanf("%d", &opcao);
+        
+        switch(opcao) {
+            case 0:
+                printf("\n Saindo do sistema...\n");
+                system("pause");
+                credenciais();
+                break;
+            case 1:
+                cadastrarPaciente();
+                break;
+            case 2:
+                excluirPaciente();
+                break;
+            case 3:
+                verPacientes();
+                break;
+            default:
+                printf("\n Opção inválida\n\n");
+                system("pause");
+        }
+    } while (opcao != 0);
+
 }
 
 int main() {
@@ -322,4 +644,3 @@ int main() {
         
     credenciais();
 }
-// só testando se meu clone foi
