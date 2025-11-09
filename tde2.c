@@ -4,6 +4,7 @@
 #include <locale.h> //escolher o idioma do console pelo setlocale
 #include <conio.h> //usado na captura de caracteres da senha para censurar na tela de login
 #include <ctype.h> //manipulação de caracteres
+#include "cJSON.h" //Biblioteca para manipulação de JSON
 #include <windows.h> //Usado para deixar em ptbr o console e todas as funções que usam system("");
 
 //Estruturas
@@ -328,7 +329,117 @@ void cadastrarUsuario() {
 }
 
 void cadastrarMedico() {
+    char nomeMedico[30], especialidade[20], crm[15];
+    int idadeMedico, totalMedicos;
 
+    system("cls");
+    printf(" [-------------- CADASTRAR MÉDICO(A) --------------]\n\n");
+
+    // Tenta abrir o arquivo para leitura para ver se ele já existe
+    FILE *file = fopen("medicos.json", "rb"); // "rb" para ler em modo binário
+    char *buffer = NULL;
+    cJSON *root_json = NULL;
+    cJSON *medicos_array = NULL;
+
+    if (file == NULL) {
+        // Arquivo não existe, vamos criar uma estrutura JSON do zero
+        printf("Arquivo 'medicos.json' não encontrado. Criando um novo.\n");
+        root_json = cJSON_CreateObject();
+        medicos_array = cJSON_CreateArray();
+        cJSON_AddItemToObject(root_json, "medicos", medicos_array);
+    } else {
+        // Arquivo existe, vamos ler e analisar (parse) seu conteúdo
+        long tamanho_arquivo;
+        fseek(file, 0, SEEK_END);
+        tamanho_arquivo = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        buffer = (char *)malloc(tamanho_arquivo + 1);
+        if (buffer == NULL) {
+            fprintf(stderr, "Erro ao alocar memória para ler o arquivo.\n");
+            fclose(file);
+            return;
+        }
+
+        fread(buffer, 1, tamanho_arquivo, file);
+        fclose(file);
+        buffer[tamanho_arquivo] = '\0';
+
+        root_json = cJSON_Parse(buffer);
+        free(buffer);
+
+        if (root_json == NULL) {
+            const char *error_ptr = cJSON_GetErrorPtr();
+            fprintf(stderr, "Erro ao analisar o JSON: %s\n", error_ptr);
+            return;
+        }
+
+        // Pega o array "medicos" do objeto JSON principal
+        medicos_array = cJSON_GetObjectItemCaseSensitive(root_json, "medicos");
+        if (!cJSON_IsArray(medicos_array)) {
+            fprintf(stderr, "Erro: A chave 'medicos' não é um array no JSON.\n");
+            cJSON_Delete(root_json);
+            return;
+        }
+    }
+
+    printf("Quantos Médicos deseja cadastrar? ");
+    scanf("%d", &totalMedicos);
+
+    for (int i = 0; i < totalMedicos; i++) {
+        printf("\n--- Cadastrando Médico %d de %d ---\n", i + 1, totalMedicos);
+        printf("Insira o Nome do Médico: ");
+        scanf(" %[^\n]", nomeMedico);
+        printf("Insira a Idade do Médico: ");
+        scanf("%d", &idadeMedico);
+        printf("Insira a Especialidade do Médico: ");
+        scanf(" %s", especialidade);
+        printf("Insira o CRM do Médico: ");
+        scanf(" %s", crm);
+
+        // Cria um novo objeto JSON para o médico
+        cJSON *medico_obj = cJSON_CreateObject();
+        cJSON_AddStringToObject(medico_obj, "nome", nomeMedico);
+        cJSON_AddNumberToObject(medico_obj, "idade", idadeMedico);
+        cJSON_AddStringToObject(medico_obj, "especialidade", especialidade);
+        cJSON_AddStringToObject(medico_obj, "crm", crm);
+
+        // Adiciona o objeto do novo médico ao array de médicos
+        cJSON_AddItemToArray(medicos_array, medico_obj);
+
+        printf("\nMédico %s cadastrado com sucesso!\n", nomeMedico);
+        system("pause");
+        system("cls");
+        printf(" [-------------- CADASTRAR MÉDICO(A) --------------]\n\n");
+    }
+
+    // Converte o objeto cJSON modificado de volta para uma string formatada
+    char *json_string_modificado = cJSON_Print(root_json);
+    if (json_string_modificado == NULL) {
+        fprintf(stderr, "Erro ao gerar a string JSON.\n");
+        cJSON_Delete(root_json);
+        return;
+    }
+
+    // Abre o arquivo em modo de escrita ("w") para sobrescrever com o conteúdo atualizado
+    file = fopen("medicos.json", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo para escrita");
+        cJSON_Delete(root_json);
+        free(json_string_modificado);
+        return;
+    }
+
+    fputs(json_string_modificado, file);
+    fclose(file);
+
+    // Libera a memória alocada pela cJSON
+    free(json_string_modificado);
+    cJSON_Delete(root_json);
+
+    printf("Todos os médicos foram salvos com sucesso em 'medicos.json'!\n");
+    system("pause");
+    return;
 }
 
 void cadastrarEnfermeiro() {
