@@ -443,7 +443,114 @@ void cadastrarMedico() {
 }
 
 void cadastrarEnfermeiro() {
+char nomeEnfermeiro[30], coren[15];
+    int idadeEnfermeiro, totalEnfermeiros;
 
+    system("cls");
+    printf(" [-------------- CADASTRAR ENFERMEIRO(A) --------------]\n\n");
+
+    // Tenta abrir o arquivo para leitura para ver se ele já existe
+    FILE *file = fopen("enfermeiros.json", "rb"); // "rb" para ler em modo binário
+    char *buffer = NULL;
+    cJSON *root_json = NULL;
+    cJSON *enfermeiro_array = NULL;
+
+    if (file == NULL) {
+        // Arquivo não existe, vamos criar uma estrutura JSON do zero
+        printf("Arquivo 'enfermeiros.json' não encontrado. Criando um novo.\n");
+        root_json = cJSON_CreateObject();
+        enfermeiro_array = cJSON_CreateArray();
+        cJSON_AddItemToObject(root_json, "enfermeiros", enfermeiro_array);
+    } else {
+        // Arquivo existe, vamos ler e analisar (parse) seu conteúdo
+        long tamanho_arquivo;
+        fseek(file, 0, SEEK_END);
+        tamanho_arquivo = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        buffer = (char *)malloc(tamanho_arquivo + 1);
+        if (buffer == NULL) {
+            fprintf(stderr, "Erro ao alocar memória para ler o arquivo.\n");
+            fclose(file);
+            return;
+        }
+
+        fread(buffer, 1, tamanho_arquivo, file);
+        fclose(file);
+        buffer[tamanho_arquivo] = '\0';
+
+        root_json = cJSON_Parse(buffer);
+        free(buffer);
+
+        if (root_json == NULL) {
+            const char *error_ptr = cJSON_GetErrorPtr();
+            fprintf(stderr, "Erro ao analisar o JSON: %s\n", error_ptr);
+            return;
+        }
+
+        // Pega o array "medicos" do objeto JSON principal
+        enf_array = cJSON_GetObjectItemCaseSensitive(root_json, "enfermeiros");
+        if (!cJSON_IsArray(enfermeiro_array)) {
+            fprintf(stderr, "Erro: A chave 'enfermeiros' não é um array no JSON.\n");
+            cJSON_Delete(root_json);
+            return;
+        }
+    }
+
+    printf("Quantos Enfermeiros deseja cadastrar? ");
+    scanf("%d", &totalEnfermeiros);
+
+    for (int i = 0; i < totalEnfermeiros; i++) {
+        printf("\n--- Cadastrando Enfermeiro %d de %d ---\n", i + 1, totalEnfermeiros);
+        printf("Insira o Nome do Médico: ");
+        scanf(" %c]", nomeEnfermeiro);
+        printf("Insira a Idade do Médico: ");
+        scanf("%d", &idadeEnfermeiro);
+        printf("Insira o COREN do Enfermeiro: ");
+        scanf(" %s", coren);
+
+        // Cria um novo objeto JSON para o enfermeiro
+        cJSON *enfermeiro_obj = cJSON_CreateObject();
+        cJSON_AddStringToObject(enfermeiro_obj, "nome", nomeEnfermeiro);
+        cJSON_AddNumberToObject(enfermeiro_obj, "idade", idadeEnfermeiro);
+        cJSON_AddStringToObject(enfermeiro_obj, "coren", coren);
+
+        // Adiciona o objeto do novo enfermeiro ao array de enfermeiro
+        cJSON_AddItemToArray(enfermeiro_array, enfermeiro_obj);
+
+        printf("\nEnfermeiro %s cadastrado com sucesso!\n", nomeEnfermeiro);
+        system("pause");
+        system("cls");
+        printf(" [-------------- CADASTRAR ENFERMEIRO(A) --------------]\n\n");
+    }
+
+    // Converte o objeto cJSON modificado de volta para uma string formatada
+    char *json_string_modificado = cJSON_Print(root_json);
+    if (json_string_modificado == NULL) {
+        fprintf(stderr, "Erro ao gerar a string JSON.\n");
+        cJSON_Delete(root_json);
+        return;
+    }
+
+    // Abre o arquivo em modo de escrita ("w") para sobrescrever com o conteúdo atualizado
+    file = fopen("enfermeiros.json", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo para escrita");
+        cJSON_Delete(root_json);
+        free(json_string_modificado);
+        return;
+    }
+
+    fputs(json_string_modificado, file);
+    fclose(file);
+
+    // Libera a memória alocada pela cJSON
+    free(json_string_modificado);
+    cJSON_Delete(root_json);
+
+    printf("Todos os enfermeiros foram salvos com sucesso em 'enfermeiros.json'!\n");
+    system("pause");
+    return;
 }
 
 void cadastrarRecepcionista() {
