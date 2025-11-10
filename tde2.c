@@ -6,6 +6,7 @@
 #include <ctype.h> //manipulação de caracteres
 #include "cJSON.h" //Biblioteca para manipulação de JSON
 #include <windows.h> //Usado para deixar em ptbr o console e todas as funções que usam system("");
+#include <stdbool.h> //Para usar booleanos
 
 //Estruturas
 typedef struct {
@@ -35,6 +36,7 @@ void gerenciarPacientes(), cadastrarPaciente(), excluirPaciente(), verPacientes(
 void gerenciarLeitos(), criarLeito(), excluirLeito();
 void gerenciarPacientesNosLeitos(), alocarPacienteAoLeito(), tirarPacienteDoLeito();
 void darAlta();
+cJSON* lerArquivoJson(const char* nomeArquivo);
 
 //Variáveis globais
 char titulo[50] = "SISTEMA HOSPITALAR";
@@ -668,8 +670,167 @@ void gerenciarLeitos() {
     }
 }
 
-void criarLeito() {
+// Função auxiliar para ler um arquivo JSON completo
+// Retorna o objeto cJSON raiz ou NULL em caso de erro.
+cJSON* lerArquivoJson(const char* nomeArquivo) {
+    FILE *file = fopen(nomeArquivo, "rb");
+    if (file == NULL) {
+        // Retorna NULL se o arquivo não existir, será tratado na função principal
+        return NULL; 
+    }
 
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char *buffer = (char *)malloc(tamanho + 1);
+    if (buffer == NULL) {
+        fprintf(stderr, "Erro de alocação de memória para ler %s\n", nomeArquivo);
+        fclose(file);
+        return NULL;
+    }
+
+    fread(buffer, 1, tamanho, file);
+    fclose(file);
+    buffer[tamanho] = '\0';
+
+    cJSON *json = cJSON_Parse(buffer);
+    free(buffer);
+
+    if (json == NULL) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        fprintf(stderr, "Erro ao analisar JSON de %s: %s\n", nomeArquivo, error_ptr);
+    }
+    
+    return json;
+}
+
+
+void criarLeito() {
+    // --- ETAPA 1: CARREGAR OS MÉDICOS DE medicos.json ---
+    cJSON *medicos_json = lerArquivoJson("medicos.json");
+    if (medicos_json == NULL) {
+        printf("Erro: Arquivo 'medicos.json' não encontrado ou inválido.\n");
+        printf("Por favor, cadastre médicos antes de criar leitos.\n");
+        system("pause");
+        return;
+    }
+
+    cJSON *medicos_array_json = cJSON_GetObjectItemCaseSensitive(medicos_json, "medicos");
+    if (!cJSON_IsArray(medicos_array_json) || cJSON_GetArraySize(medicos_array_json) == 0) {
+        printf("Nenhum médico encontrado em 'medicos.json'.\n");
+        printf("Por favor, cadastre médicos antes de criar leitos.\n");
+        cJSON_Delete(medicos_json);
+        system("pause");
+        return;
+    }
+
+    int num_medicos = cJSON_GetArraySize(medicos_array_json);
+    // Aloca um array de strings para guardar os nomes dos médicos
+    char **lista_nomes_medicos = (char **)malloc(num_medicos * sizeof(char *));
+
+    cJSON *medico_item;
+    int medico_idx = 0;
+    cJSON_ArrayForEach(medico_item, medicos_array_json) {
+        cJSON *nome_obj = cJSON_GetObjectItemCaseSensitive(medico_item, "nome");
+        if (cJSON_IsString(nome_obj) && (nome_obj->valuestring != NULL)) {
+            lista_nomes_medicos[medico_idx] = strdup(nome_obj->valuestring); // strdup aloca e copia
+            medico_idx++;
+        }
+    }
+
+    // --- ETAPA 2: LER/CRIAR O ARQUIVO leitos.json ---
+    system("cls");
+    printf(" [-------------- CRIAR LEITO --------------]\n\n");
+
+    cJSON *leitos_json = lerArquivoJson("leitos.json");
+    cJSON *leitos_array_json;
+
+    if (leitos_json == NULL) {
+        printf("Arquivo 'leitos.json' não encontrado. Criando um novo.\n");
+        leitos_json = cJSON_CreateObject();
+        leitos_array_json = cJSON_CreateArray();
+        cJSON_AddItemToObject(leitos_json, "leitos", leitos_array_json);
+    } else {
+        leitos_array_json = cJSON_GetObjectItemCaseSensitive(leitos_json, "leitos");
+        if (!cJSON_IsArray(leitos_array_json)) {
+            fprintf(stderr, "Erro: A chave 'leitos' não é um array no JSON.\n");
+            cJSON_Delete(medicos_json); // Libera memória dos médicos
+            cJSON_Delete(leitos_json);
+            return;
+        }
+    }
+
+    // --- ETAPA 3: LOOP DE CRIAÇÃO DE LEITOS ---
+    int totalLeitos;
+    printf("Quantos Leitos deseja criar? ");
+    scanf("%d", &totalLeitos);
+
+    for (int i = 0; i < totalLeitos; i++) {
+        char nomeLeito[20];
+        
+        printf("\n--- Criando Leito %d de %d ---\n", i + 1, totalLeitos);
+        printf("Insira o Nome do Leito (ex: Leito 101): ");
+        scanf(" %[^\n]", nomeLeito);
+
+        // Apresenta a lista de médicos para seleção
+        printf("\nSelecione o Médico Responsável:\n");
+        for (int j = 0; j < num_medicos; j++) {
+            printf(" %d - %s\n", j + 1, lista_nomes_medicos[j]);
+        }
+
+        int escolha_medico;
+        do {
+            printf("Escolha uma opção (1 a %d): ", num_medicos);
+            scanf("%d", &escolha_medico);
+            if (escolha_medico < 1 || escolha_medico > num_medicos) {
+                printf("Opção inválida! Tente novamente.\n");
+            }
+        } while (escolha_medico < 1 || escolha_medico > num_medicos);
+        
+        // O índice do array é a escolha do usuário - 1
+        char *medico_responsavel_escolhido = lista_nomes_medicos[escolha_medico - 1];
+
+        // Cria o objeto JSON para o novo leito
+        cJSON *leito_obj = cJSON_CreateObject();
+        cJSON_AddStringToObject(leito_obj, "nomeLeito", nomeLeito);
+        cJSON_AddBoolToObject(leito_obj, "ocupado", false);
+        cJSON_AddStringToObject(leito_obj, "nomePacienteNoLeito", "Nenhum");
+        cJSON_AddStringToObject(leito_obj, "medicoResponsavel", medico_responsavel_escolhido);
+
+        cJSON_AddItemToArray(leitos_array_json, leito_obj);
+
+        printf("\nLeito %s criado com sucesso! Médico Responsável: %s\n", nomeLeito, medico_responsavel_escolhido);
+        system("pause");
+        system("cls");
+        printf(" [-------------- CRIAR LEITO --------------]\n\n");
+    }
+
+    // --- ETAPA 4: SALVAR AS ALTERAÇÕES EM leitos.json ---
+    char *json_string_modificado = cJSON_Print(leitos_json);
+    
+    FILE* file_saida = fopen("leitos.json", "w");
+    if (file_saida == NULL) {
+        perror("Erro ao abrir 'leitos.json' para escrita");
+    } else {
+        fputs(json_string_modificado, file_saida);
+        fclose(file_saida);
+        printf("Todos os leitos foram salvos com sucesso em 'leitos.json'!\n");
+    }
+
+    // --- ETAPA 5: LIBERAR TODA A MEMÓRIA ALOCADA ---
+    free(json_string_modificado);
+    cJSON_Delete(leitos_json);
+    cJSON_Delete(medicos_json);
+
+    // Libera a lista de nomes de médicos
+    for (int i = 0; i < num_medicos; i++) {
+        free(lista_nomes_medicos[i]);
+    }
+    free(lista_nomes_medicos);
+    
+    system("pause");
+    return;
 }
 
 void excluirLeito() {
