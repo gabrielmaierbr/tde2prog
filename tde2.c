@@ -389,14 +389,14 @@ void cadastrarMedico() {
     scanf("%d", &totalMedicos);
 
     for (int i = 0; i < totalMedicos; i++) {
-        printf("\n--- Cadastrando Médico %d de %d ---\n", i + 1, totalMedicos);
-        printf("Insira o Nome do Médico: ");
+        printf("\n--- Cadastrando Médico(a) %d de %d ---\n", i + 1, totalMedicos);
+        printf("Insira o Nome do Médico(a): ");
         scanf(" %[^\n]", nomeMedico);
-        printf("Insira a Idade do Médico: ");
-        scanf("%d", &idadeMedico);
-        printf("Insira a Especialidade do Médico: ");
+        printf("Insira a Idade do Médico(a): ");
+        scanf("%d", idadeMedico);
+        printf("Insira a Especialidade do Médico(a): ");
         scanf(" %s", especialidade);
-        printf("Insira o CRM do Médico: ");
+        printf("Insira o CRM do Médico(a): ");
         scanf(" %s", crm);
 
         // Cria um novo objeto JSON para o médico
@@ -503,11 +503,11 @@ char nomeEnfermeiro[30], coren[15];
     scanf("%d", &totalEnfermeiros);
 
     for (int i = 0; i < totalEnfermeiros; i++) {
-        printf("\n--- Cadastrando Enfermeiro %d de %d ---\n", i + 1, totalEnfermeiros);
-        printf("Insira o Nome do Médico: ");
-        scanf(" %c]", nomeEnfermeiro);
-        printf("Insira a Idade do Médico: ");
-        scanf("%d", &idadeEnfermeiro);
+        printf("\n--- Cadastrando Enfermeiro(a) %d de %d ---\n", i + 1, totalEnfermeiros);
+        printf("Insira o Nome do Enfermeiro(a): ");
+        scanf(" %[^\n]", nomeEnfermeiro);
+        printf("Insira a Idade do Enfermeiro(a): ");
+        scanf("%d", idadeEnfermeiro);
         printf("Insira o COREN do Enfermeiro: ");
         scanf(" %s", coren);
 
