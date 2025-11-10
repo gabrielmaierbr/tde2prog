@@ -43,6 +43,8 @@ Paciente pacientesSistema[100];
 int totalUsuarios = 0;
 Usuario usuarioLogado;
 
+//----------------------------- Login e Senha -----------------------------
+
 void credenciais() {
     char login[30];
     char* senha; //Ponteiro para usar a função
