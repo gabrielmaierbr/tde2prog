@@ -491,7 +491,7 @@ char nomeEnfermeiro[30], coren[15];
         }
 
         // Pega o array "medicos" do objeto JSON principal
-        enf_array = cJSON_GetObjectItemCaseSensitive(root_json, "enfermeiros");
+        enfermeiro_array = cJSON_GetObjectItemCaseSensitive(root_json, "enfermeiros");
         if (!cJSON_IsArray(enfermeiro_array)) {
             fprintf(stderr, "Erro: A chave 'enfermeiros' não é um array no JSON.\n");
             cJSON_Delete(root_json);
