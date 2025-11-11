@@ -46,8 +46,8 @@ bool usuarioExiste(const char* login);
 char titulo[50] = "SISTEMA HOSPITALAR";
 int totalUsuarios = 0;
 Usuario usuariosSistema[50];
-Paciente pacientesSistema[100];
 Usuario usuarioLogado;
+Paciente pacientesSistema[100];
 
 //----------------------------- Login e Senha -----------------------------
 
@@ -76,19 +76,20 @@ void credenciais() {
         printf(" Login: ");
         scanf("%s", login);
         
-        //Limpa o buffer do teclado antes de ler a senha, forma mais eficiente que o fflush(stdin)
+        // Limpa o buffer do teclado antes de ler a senha
         int c;
         while ((c = getchar()) != '\n' && c != EOF);
         
         printf(" Senha: ");
         senha = lerSenhaComMascara();
 
-        //debug para mostrar o que está sendo comparado, remover antes da entrega do sistema
-        printf("DEBUG: Login digitado: '%s'\n", login);
-        printf("DEBUG: Senha digitada: '%s'\n", senha);
+        printf("DEBUG: Login digitado: '%s'\n", login); // DEBUG
+        printf("DEBUG: Senha digitada: '%s'\n", senha);  // DEBUG
         
         for (int i = 0; i < totalUsuarios; i++) {
-            printf("DEBUG: Comparando com usuario[%d]: login='%s' senha='%s'\n", i, usuariosSistema[i].login, usuariosSistema[i].senha);      
+
+            printf("DEBUG: Comparando com usuario[%d]: login='%s' senha='%s'\n", i, usuariosSistema[i].login, usuariosSistema[i].senha); // DEBUG
+
             if (strcmp(login, usuariosSistema[i].login) == 0 && 
                 strcmp(senha, usuariosSistema[i].senha) == 0) {
                 
@@ -104,7 +105,6 @@ void credenciais() {
                     menuMEDICO();
                 } else if (strcmp(usuarioLogado.tipo, "enfermeiro") == 0) {
                     menuENFERMEIRO();
-                    system("pause");
                 }
                 break;
             }
@@ -153,12 +153,10 @@ void lerUsuariosJSON() {
         return;
     }
     
-
     // Descobre o tamanho do arquivo usuarios.json e coloca na variável "tamanho"
     fseek(file, 0, SEEK_END);
     long tamanho = ftell(file);
     fseek(file, 0, SEEK_SET);
-    
 
     // Aloca memória e lê o arquivo e atribui o conteúdo ao ponteiro "buffer"
     char *buffer = (char*)malloc(tamanho + 1);
@@ -168,7 +166,6 @@ void lerUsuariosJSON() {
     // Fecha o arquivo usuarios.json
     fclose(file);
     
-
     // Converte o texto .json na estrutura da biblioteca cJSON
     cJSON *root = cJSON_Parse(buffer);
 
@@ -227,30 +224,40 @@ char* lerSenhaComMascara() {
     int i = 0;
     char ch;
     
-    senha[0] = '\0'; //remove todo o conteúdo da variavel com um valor nulo, prevenção de erros
+    // Remove todo o conteúdo da variavel com um valor nulo, prevenção de erros
+    senha[0] = '\0';
     
     while (1) {
-        ch = getch(); //lê o conteúdo do caractere sem precisar dar Enter
+        // Lê o conteúdo do caractere sem precisar dar Enter
+        ch = getch();
         
-        if (ch == 13 || ch == 10) { //caso o usuário pressione Enter (numero 13) ou possua quebra de linha (numero 10) de acordo com ASCII
-            senha[i] = '\0'; //adiciona \0 no final para colocar um valor nulo depois dos caracteres da senha, a fim de evitar erros na leitura
-            printf("\n"); //pula a linha no final da leitura
+        // Caso o usuário pressione Enter (numero 13) ou possua quebra de linha (numero 10) de acordo com ASCII
+        if (ch == 13 || ch == 10) {
+            // Adiciona \0 no final para colocar um valor nulo depois dos caracteres da senha, a fim de evitar erros na leitura
+            senha[i] = '\0';
+            printf("\n"); // Pula a linha no final da leitura
             break;
         } 
-        else if (ch == 8) { //8 é o numero do backspace, caso o usuario apague, decrementa o i para voltar o lugar do caractere apagado
+
+        // 8 é o numero do backspace, caso o usuario apague, decrementa o i para voltar o lugar do caractere apagado
+        else if (ch == 8) {
             if (i > 0) {
                 i--;
-                printf("\b \b"); //esta linha serve para apagar o caractere "*" da tela de login após ter um caractere apagado na string
+                printf("\b \b"); // Esta linha serve para apagar o caractere "*" da tela de login após ter um caractere apagado na string
             }
         }
-        else if (i < 29) { //verifica o tamanho do vetor de 0 a 29 e armazena cada caractere digitado na variavel senha enquanto ao mesmo tempo exibe um "*" para cada caractere digitado na tela de login
+
+        // Verifica o tamanho do vetor de 0 a 29 e armazena cada caractere digitado na variavel senha enquanto ao mesmo tempo exibe um "*" para cada caractere digitado na tela de login
+        else if (i < 29) {
             senha[i] = ch;
             i++;
             printf("*");
         }
-        else if (ch == 3 || ch == 27) { //3 é o código do CTRL + C e 27 é o do ESC, caso o usuário queira cancelar a digitação
+
+        // 3 é o código do CTRL + C e 27 é o do ESC, caso o usuário queira cancelar a digitação
+        else if (ch == 3 || ch == 27) {
             i = 0;
-            senha[0] = '\0'; //vai limpar o conteúdo da senha ao cancelar
+            senha[0] = '\0'; // Vai limpar o conteúdo da senha ao cancelar
             printf("\n--- Senha cancelada ---\n");
             break;
         }
