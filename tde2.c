@@ -44,9 +44,9 @@ bool usuarioExiste(const char* login);
 
 //Variáveis globais
 char titulo[50] = "SISTEMA HOSPITALAR";
+int totalUsuarios = 0;
 Usuario usuariosSistema[50];
 Paciente pacientesSistema[100];
-int totalUsuarios = 0;
 Usuario usuarioLogado;
 
 //----------------------------- Login e Senha -----------------------------
@@ -58,17 +58,16 @@ void credenciais() {
     
     lerUsuariosJSON();
     
-    if (totalUsuarios == 0) { //Detecta se tem ou nao usuarios (arquivo json), caso nao houver, criar um novo com os usuários padrões
-        printf("Criando usuários padrão...\n");
+    //Detecta se tem ou não usuários (arquivo json), caso nao houver, criar um novo com o usuário padrão admin
+    if (totalUsuarios == 0) {
         
+        // Colocando o usuário admin na struct
         strcpy(usuariosSistema[0].login, "admin");
         strcpy(usuariosSistema[0].senha, "adm123");
         strcpy(usuariosSistema[0].tipo, "admin");
-        
         totalUsuarios = 1;
+
         criarUsuarioPadrao();
-        printf("Arquivo usuarios.json criado com usuários padrão.\n");
-        system("pause");
     }
 
     while (!autenticado) {
@@ -119,71 +118,87 @@ void credenciais() {
 }
 
 void criarUsuarioPadrao() {
-    FILE *file = fopen("usuarios.json", "w"); //Abre o arquivo usuarios.json para alterações, w de write para escrever
+
+    //Abre o arquivo usuarios.json para alterações, w de write para escrever
+    FILE *file = fopen("usuarios.json", "w");
+
+    // Caso não consiga abrir ou criar, ele retorna
     if (!file) {
-        printf("Erro ao criar arquivo usuarios.json\n");
+        printf("Erro ao criar arquivo usuarios.json\n\n");
+        system("pause");
         return;
     }
 
+    // Escreve os dados do admin no .json
     fprintf(file, "{\n");
     fprintf(file, "  \"usuarios\": [\n");
-    
-    for (int i = 0; i < totalUsuarios; i++) {
-        fprintf(file, "    {\n");
-        fprintf(file, "      \"login\": \"%s\",\n", usuariosSistema[i].login);
-        fprintf(file, "      \"senha\": \"%s\",\n", usuariosSistema[i].senha);
-        fprintf(file, "      \"tipo\": \"%s\"\n", usuariosSistema[i].tipo);
-        
-        if (i < totalUsuarios - 1) {
-            fprintf(file, "    },\n");
-        } else {
-            fprintf(file, "    }\n");
-        }
-    }
-    
+    fprintf(file, "    {\n");
+    fprintf(file, "      \"login\": \"%s\",\n", usuariosSistema[0].login);
+    fprintf(file, "      \"senha\": \"%s\",\n", usuariosSistema[0].senha);
+    fprintf(file, "      \"tipo\": \"%s\"\n", usuariosSistema[0].tipo);
+    fprintf(file, "    }\n");
     fprintf(file, "  ]\n");
     fprintf(file, "}\n");
-    
-    fclose(file);
-    printf("Arquivo usuarios.json salvo com %d usuários.\n", totalUsuarios);
 
-    //O processo é encerrado e salva usuários padrões pré-definidos caso o arquivo seja apagado
+    fclose(file);
 }
 
 void lerUsuariosJSON() {
+    // Abre o arquivo usuarios.json para ler
     FILE *file = fopen("usuarios.json", "r");
+
+    // Caso o não exista, entrará nesse if
     if (!file) {
         totalUsuarios = 0;
         return;
     }
     
+
+    // Descobre o tamanho do arquivo usuarios.json e coloca na variável "tamanho"
     fseek(file, 0, SEEK_END);
     long tamanho = ftell(file);
     fseek(file, 0, SEEK_SET);
     
+
+    // Aloca memória e lê o arquivo e atribui o conteúdo ao ponteiro "buffer"
     char *buffer = (char*)malloc(tamanho + 1);
     fread(buffer, 1, tamanho, file);
     buffer[tamanho] = '\0';
+
+    // Fecha o arquivo usuarios.json
     fclose(file);
     
+
+    // Converte o texto .json na estrutura da biblioteca cJSON
     cJSON *root = cJSON_Parse(buffer);
+
+    // Caso não consiga, ele limpará o buffer e retornará
     if (!root) {
         free(buffer);
         return;
     }
     
+    // Pega o objeto "usuarios" do JSON
     cJSON *usuariosArray = cJSON_GetObjectItem(root, "usuarios");
+
+    // Garante que esse objeto seja um array
     if (cJSON_IsArray(usuariosArray)) {
         totalUsuarios = 0;
         cJSON *usuarioItem;
+
+        // for que percorre cada objeto do array --> cJSON_ArrayForEach(objeto, array)
         cJSON_ArrayForEach(usuarioItem, usuariosArray) {
             if (totalUsuarios >= 50) break;
             
+            // Pega os campos do usuário: login, senha e tipo
             cJSON *login = cJSON_GetObjectItem(usuarioItem, "login");
             cJSON *senha = cJSON_GetObjectItem(usuarioItem, "senha");
             cJSON *tipo = cJSON_GetObjectItem(usuarioItem, "tipo");
             
+            // Verifica se os itens são strings
             if (cJSON_IsString(login) && cJSON_IsString(senha) && cJSON_IsString(tipo)) {
+
+                // Coloca os valores do JSON para o struct
                 strcpy(usuariosSistema[totalUsuarios].login, login->valuestring);
                 strcpy(usuariosSistema[totalUsuarios].senha, senha->valuestring);
                 strcpy(usuariosSistema[totalUsuarios].tipo, tipo->valuestring);
@@ -192,6 +207,7 @@ void lerUsuariosJSON() {
         }
     }
     
+    // Deleta o arquivo convertido em cJSON e limpa o buffer
     cJSON_Delete(root);
     free(buffer);
 }
