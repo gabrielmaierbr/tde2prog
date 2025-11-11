@@ -750,7 +750,7 @@ void cadastrarRecepcionista() {
         printf("\n --- Cadastrando Recepcionista %d de %d",i+1,qtd_de_recepcionistas);
         printf("\nInsira o Nome do Recepcionista: ");
         scanf(" %[^\n]", recepcionistasSistema[totalRecepcionistas].nome);
-        printf("\nInsira a Idade do Enfermeiro(a): ");
+        printf("\nInsira a Idade do Recepcionista: ");
         scanf("%d", &recepcionistasSistema[totalRecepcionistas].idade);
 
         while (1) {
@@ -837,7 +837,7 @@ void excluirUsuario() {
 }
 
 void excluirMedico() {
-
+    
 }
 
 void excluirEnfermeiro() {
