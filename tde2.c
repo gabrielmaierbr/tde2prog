@@ -262,7 +262,8 @@ void gerenciarUsuarios() {
     int opcao;
     while (1) {
         system("cls");
-        printf(" [-------------- GERENCIAR USUÁRIO --------------]\n\n");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> GERENCIAR USUÁRIO <---\n");
         printf("Opções [0 para voltar]:\n\n");
         printf(" 1- Cadastrar Usuário\n");
         printf(" 2- Excluir Usuário\n");
@@ -286,7 +287,8 @@ void cadastrarUsuario() {
     int opcao;
     while(1) {
         system("cls");
-        printf(" [-------------- CADASTRAR USUÁRIO --------------]\n\n");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> CADASTRAR USUÁRIO <---\n");
         printf("Qual usuário deseja cadastrar [0 para voltar]?\n\n");
         printf(" 1- Médico\n");
         printf(" 2- Enfermeiro\n");
@@ -726,7 +728,8 @@ void excluirUsuario() {
     int opcao;
     while(1) {
         system("cls");
-        printf(" [-------------- EXCLUIR USUÁRIO --------------]\n\n");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> EXCLUIR USUÁRIO <---\n");
         printf("Qual usuário deseja excluir [0 para voltar]?\n\n");
         printf(" 1- Médico\n");
         printf(" 2- Enfermeiro\n");
@@ -819,7 +822,6 @@ void excluirMedico() {
     system("pause");
 }
 
-
 void excluirEnfermeiro() {
     char corenBusca[15];
     char *buffer = NULL;
@@ -888,7 +890,6 @@ void excluirEnfermeiro() {
     printf("Enfermeiro(a) removido com sucesso!\n");
     system("pause");
 }
-
 
 void excluirRecepcionista() {
     char cpfBusca[20];
@@ -959,14 +960,14 @@ void excluirRecepcionista() {
     system("pause");
 }
 
-
 //--------------------------- Gerenciar Pacientes ---------------------------
 
 void gerenciarPacientes() {
     int opcao;
     while (1) {
         system("cls");
-        printf(" [-------------- GERENCIAR PACIENTES --------------]\n\n");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> GERENCIAR PACIENTES <---\n");
         printf("Opções [0 para voltar]:\n\n");
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
@@ -1007,7 +1008,7 @@ void gerenciarLeitos() {
     int opcao;
     while (1) {
         system("cls");
-        printf(" [-------------- GERENCIAR LEITOS --------------]\n\n");
+        printf(" ---> GERENCIAR LEITOS <---\n");
         printf("Opções [0 para voltar]:\n\n");
         printf(" 1- Criar Leito\n");
         printf(" 2- Excluir Leito\n");
@@ -1243,7 +1244,8 @@ void menuADM() {
     
     do {
         system("cls");
-        printf(" [---------- %s - MENU ADMINISTRADOR ----------]\n\n", titulo);
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> MENU ADMINISTRADOR <---\n");
         printf(" 1- Gerenciar Usuários\n");
         printf(" 2- Gerenciar Pacientes\n");
         printf(" 3- Gerenciar Leitos\n");
@@ -1278,7 +1280,8 @@ void menuMEDICO() {
 
     do {
         system("cls");
-        printf(" [---------- %s - MENU MÉDICO(A) ----------]\n\n", titulo);
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> MENU MÉDICO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
         printf(" 2- Dar Alta\n");
         printf(" 0- Sair\n");
@@ -1310,7 +1313,8 @@ void menuENFERMEIRO() {
 
     do {
         system("cls");
-        printf(" [---------- %s - MENU ENFERMEIRO(A) ----------]\n\n", titulo);
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> MENU ENFERMEIRO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
         printf(" 2- Gerenciar pacientes nos Leitos\n");
         printf(" 0- Sair\n");
@@ -1342,7 +1346,8 @@ void menuRECEPCAO() {
 
     do {
         system("cls");
-        printf(" [---------- %s - MENU RECEPÇÃO ----------]\n\n", titulo);
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> MENU RECEPÇÃO <---\n");
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
         printf(" 3- Ver Pacientes");
