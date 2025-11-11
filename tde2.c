@@ -21,7 +21,21 @@ typedef struct {
     int idade;
     char especialidade[20];
     char crm[15];
-} Medicos;
+} Medico;
+
+typedef struct {
+    char login[20];
+    char nome[50];
+    int idade;
+    char especialidade[20];
+    char coren[15];
+} Enfermeiro;
+
+typedef struct {
+    char login[20];
+    char nome[50];
+    int idade;
+} Recepcionista;
 
 typedef struct {
     char nome[50];
@@ -70,9 +84,12 @@ void menuRECEPCAO();
 char titulo[50] = "SISTEMA HOSPITALAR";
 int totalUsuarios = 0;
 int totalMedicos = 0;
+int totalEnfermeiros = 0;
 Usuario usuariosSistema[50];
 Usuario usuarioLogado;
-Medicos medicosSistema[50];
+Medico medicosSistema[50];
+Enfermeiro enfermeirosSistema[50];
+Recepcionista recepcionistasSistema[50];
 Paciente pacientesSistema[100];
 
 //----------------------------- Login e Senha -----------------------------
@@ -108,13 +125,8 @@ void credenciais() {
         
         printf(" Senha: ");
         senha = lerSenhaComMascara();
-
-        printf("DEBUG: Login digitado: '%s'\n", login); // DEBUG
-        printf("DEBUG: Senha digitada: '%s'\n", senha);  // DEBUG
         
         for (int i = 0; i < totalUsuarios; i++) {
-
-            printf("DEBUG: Comparando com usuario[%d]: login='%s' senha='%s'\n", i, usuariosSistema[i].login, usuariosSistema[i].senha); // DEBUG
 
             if (strcmp(login, usuariosSistema[i].login) == 0 && strcmp(senha, usuariosSistema[i].senha) == 0) {
                 
@@ -245,9 +257,9 @@ void jsonParaStructs() {
         cJSON_AddItemToObject(root, "medicos", medicosArray);
 
         char *jsonAtualizado = cJSON_Print(root);
-        FILE *file2 = fopen("informacoes.json", "w");
-        fputs(jsonAtualizado, file2);
-        fclose(file2);
+        FILE *file = fopen("informacoes.json", "w");
+        fputs(jsonAtualizado, file);
+        fclose(file);
         free(jsonAtualizado);
     } else {
         totalMedicos = 0;
@@ -270,6 +282,43 @@ void jsonParaStructs() {
                 strcpy(medicosSistema[totalMedicos].especialidade, especialidade->valuestring);
                 strcpy(medicosSistema[totalMedicos].crm, crm->valuestring);
                 totalMedicos++;
+            }
+        }
+    }
+
+    // Procura o array "enfermeiros" dentro do cJSON
+    cJSON *enfermeirosArray = cJSON_GetObjectItem(root, "enfermeiros");
+
+    if (enfermeirosArray == NULL) {
+        enfermeirosArray = cJSON_CreateArray();
+        cJSON_AddItemToObject(root, "enfermeiros", enfermeirosArray);
+
+        char *jsonAtualizado = cJSON_Print(root);
+        FILE *file = fopen("informacoes.json", "w");
+        fputs(jsonAtualizado, file);
+        fclose(file);
+        free(jsonAtualizado);
+    } else {
+        totalEnfermeiros = 0;
+        cJSON *enfermeiroItem;
+
+        // Percorre cada item do array (isso é um for)
+        cJSON_ArrayForEach(enfermeiroItem, enfermeirosArray) {
+            if (totalEnfermeiros >= 50) break;
+            
+            cJSON *login = cJSON_GetObjectItem(enfermeiroItem, "login");
+            cJSON *nome = cJSON_GetObjectItem(enfermeiroItem, "nome");
+            cJSON *idade = cJSON_GetObjectItem(enfermeiroItem, "idade");
+            cJSON *especialidade = cJSON_GetObjectItem(enfermeiroItem, "especialidade");
+            cJSON *coren = cJSON_GetObjectItem(enfermeiroItem, "coren");
+            
+            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(especialidade) && cJSON_IsString(coren)) {
+                strcpy(enfermeirosSistema[totalEnfermeiros].login, login->valuestring);
+                strcpy(enfermeirosSistema[totalEnfermeiros].nome, nome->valuestring);
+                enfermeirosSistema[totalEnfermeiros].idade = idade->valueint;
+                strcpy(enfermeirosSistema[totalEnfermeiros].especialidade, especialidade->valuestring);
+                strcpy(enfermeirosSistema[totalEnfermeiros].coren, coren->valuestring);
+                totalEnfermeiros++;
             }
         }
     }
@@ -391,7 +440,7 @@ void cadastrarMedico() {
     cJSON *root;
     char *buffer;
 
-    // Se o arquivo nãp for encontrado
+    // Se o arquivo não for encontrado
     if(!file) {
         return;
     }
@@ -499,6 +548,118 @@ void cadastrarMedico() {
 }
 
 void cadastrarEnfermeiro() {
+    system("cls");
+    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" ---> CADASTRAR ENFERMEIRO(A) <---\n");
+
+    FILE *file = fopen("informacoes.json","r");
+    cJSON *root;
+    char *buffer;
+
+    // Se o arquivo não for encontrado
+    if(!file) {
+        return;
+    }
+
+    // Vê o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Lê o arquivo e põe no ponteiro 'buffer'
+    buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, file);
+    buffer[tamanho] = '\0';
+
+    // Fecha o arquivo
+    fclose(file);
+
+    // Transforma em formato JSON
+    root = cJSON_Parse(buffer);
+    free(buffer);
+
+    // Caso o arquivo não possa ser transformado
+    if(!root) {
+        return;
+    }
+
+    cJSON *usuariosArray = cJSON_GetObjectItem(root, "usuarios");
+    cJSON *enfermeirosArray = cJSON_GetObjectItem(root, "enfermeiros");
+
+    int qtd_de_enfermeiros;
+    printf("Quantos enfermeiros deseja cadastrar? ");
+    scanf("%d",&qtd_de_enfermeiros);
+
+    for (int i=0;i<qtd_de_enfermeiros;i++) {
+        system("cls");
+
+        cJSON *novoUsuario = cJSON_CreateObject();
+        cJSON *novoEnfermeiro = cJSON_CreateObject();
+
+        printf("\n --- Cadastrando Enfermeiro(a) %d de %d",i+1,qtd_de_enfermeiros);
+        printf("\nInsira o Nome do Enfermeiro(a): ");
+        scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].nome);
+        printf("\nInsira a Idade do Enfermeiro(a): ");
+        scanf("%d", &enfermeirosSistema[totalEnfermeiros].idade);
+        printf("\nInsira a Especialidade do Enfermeiro(a): ");
+        scanf(" %s", enfermeirosSistema[totalEnfermeiros].especialidade);
+        printf("\nInsira o CRM do Enfermeiro(a): ");
+        scanf(" %s", enfermeirosSistema[totalEnfermeiros].coren);
+
+        while (1) {
+            int repetido = false;
+            printf("\nInsira o Login do Usuário do Enfermeiro(a): ");
+            scanf(" %s", enfermeirosSistema[totalEnfermeiros].login);
+
+            for (int i=0;i<totalUsuarios;i++) {
+                if (strcmp(enfermeirosSistema[totalEnfermeiros].login, usuariosSistema[i].login) == 0) {
+                    repetido = true;
+                    printf("Este login já existe!\n");
+                    break;
+                }
+            }
+            if (repetido == false) {
+                break;
+            }
+        }
+
+        strcpy(usuariosSistema[totalUsuarios].login, enfermeirosSistema[totalEnfermeiros].login);
+        printf("\nInsira a Senha do Usuário do Médico(a): ");
+        scanf(" %s", usuariosSistema[totalUsuarios].senha);
+        strcpy(usuariosSistema[totalUsuarios].tipo, "enfermeiro");
+
+        // Objeto do Enfermeiro
+        cJSON_AddStringToObject(novoEnfermeiro, "login", enfermeirosSistema[totalEnfermeiros].login);
+        cJSON_AddStringToObject(novoEnfermeiro, "nome", enfermeirosSistema[totalEnfermeiros].nome);
+        cJSON_AddNumberToObject(novoEnfermeiro, "idade", enfermeirosSistema[totalEnfermeiros].idade);
+        cJSON_AddStringToObject(novoEnfermeiro, "especialidade", enfermeirosSistema[totalEnfermeiros].especialidade);
+        cJSON_AddStringToObject(novoEnfermeiro, "crm", enfermeirosSistema[totalEnfermeiros].coren);
+
+        // Objeto do Usuário
+        cJSON_AddStringToObject(novoUsuario, "login", usuariosSistema[totalUsuarios].login);
+        cJSON_AddStringToObject(novoUsuario, "senha", usuariosSistema[totalUsuarios].senha);
+        cJSON_AddStringToObject(novoUsuario, "tipo", usuariosSistema[totalUsuarios].tipo);
+
+        // Adicionando os objetos ao JSON
+        cJSON_AddItemToArray(usuariosArray, novoUsuario);
+        cJSON_AddItemToArray(enfermeirosArray, novoEnfermeiro);
+
+        printf("\nEnfermeiro %s cadastrado com sucesso!\n\n", enfermeirosSistema[totalEnfermeiros].nome);
+        system("pause");
+
+        totalUsuarios++;
+        totalEnfermeiros++;
+
+    }
+
+    // Salvar tudo no json
+    FILE *fileOut = fopen("informacoes.json","w");
+    char *jsonAtualizado = cJSON_Print(root);
+    fprintf(fileOut, "%s", jsonAtualizado);
+
+    fclose(fileOut);
+    free(jsonAtualizado);
+    cJSON_Delete(root);
 
 }
 
