@@ -31,30 +31,48 @@ typedef struct {
     char diagnostico[100];
 } Paciente;
 
-//Declaração das Funções
-void jsonParaStructs();
+// Declaração das Funções
 void credenciais();
 void criarUsuarioPadrao();
-void lerUsuariosJSONparaStructs();
+void jsonParaStructs();
 char* lerSenhaComMascara();
-void menuADM(), menuMEDICO(), menuENFERMEIRO(), menuRECEPCAO();
 void gerenciarUsuarios();
-void cadastrarUsuario(), cadastrarMedico(), cadastrarEnfermeiro(), cadastrarRecepcionista();
-void excluirUsuario(), excluirMedico(), excluirEnfermeiro(), excluirRecepcionista();
-void gerenciarPacientes(), cadastrarPaciente(), excluirPaciente(), verPacientes();
-void gerenciarLeitos(), criarLeito(), excluirLeito();
-void gerenciarPacientesNosLeitos(), alocarPacienteAoLeito(), tirarPacienteDoLeito();
+
+void cadastrarUsuario();
+void cadastrarMedico();
+void cadastrarEnfermeiro();
+void cadastrarRecepcionista();
+void excluirUsuario();
+void excluirMedico();
+void excluirEnfermeiro();
+void excluirRecepcionista();
+
+void gerenciarPacientes();
+void cadastrarPaciente();
+void excluirPaciente();
+void verPacientes();
+
+void gerenciarLeitos();
+void criarLeito();
+void excluirLeito();
+void gerenciarPacientesNosLeitos();
+void alocarPacienteAoLeito();
+void tirarPacienteDoLeito();
+
 void darAlta();
 
+void menuADM();
+void menuMEDICO();
+void menuENFERMEIRO();
+void menuRECEPCAO();
 
 //Variáveis globais
 char titulo[50] = "SISTEMA HOSPITALAR";
 int totalUsuarios = 0;
 int totalMedicos = 0;
 Usuario usuariosSistema[50];
-Medicos medicosSistema[50];
-Usuario usuarios;
 Usuario usuarioLogado;
+Medicos medicosSistema[50];
 Paciente pacientesSistema[100];
 
 //----------------------------- Login e Senha -----------------------------
@@ -239,12 +257,14 @@ void jsonParaStructs() {
         cJSON_ArrayForEach(medicoItem, medicosArray) {
             if (totalMedicos >= 50) break;
             
+            cJSON *login = cJSON_GetObjectItem(medicoItem, "login");
             cJSON *nome = cJSON_GetObjectItem(medicoItem, "nome");
             cJSON *idade = cJSON_GetObjectItem(medicoItem, "idade");
             cJSON *especialidade = cJSON_GetObjectItem(medicoItem, "especialidade");
             cJSON *crm = cJSON_GetObjectItem(medicoItem, "crm");
             
-            if (cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(especialidade) && cJSON_IsString(crm)) {
+            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(especialidade) && cJSON_IsString(crm)) {
+                strcpy(medicosSistema[totalMedicos].login, login->valuestring);
                 strcpy(medicosSistema[totalMedicos].nome, nome->valuestring);
                 medicosSistema[totalMedicos].idade = idade->valueint;
                 strcpy(medicosSistema[totalMedicos].especialidade, especialidade->valuestring);
@@ -367,6 +387,114 @@ void cadastrarMedico() {
     printf(" [---------- %s -----------]\n\n", titulo);
     printf(" ---> CADASTRAR MÉDICO(A) <---\n");
 
+    FILE *file = fopen("informacoes.json","r");
+    cJSON *root;
+    char *buffer;
+
+    // Se o arquivo nãp for encontrado
+    if(!file) {
+        return;
+    }
+
+    // Vê o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Lê o arquivo e põe no ponteiro 'buffer'
+    buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, file);
+    buffer[tamanho] = '\0';
+
+    // Fecha o arquivo
+    fclose(file);
+
+    // Transforma em formato JSON
+    root = cJSON_Parse(buffer);
+    free(buffer);
+
+    // Caso o arquivo não possa ser transformado
+    if(!root) {
+        return;
+    }
+
+    cJSON *usuariosArray = cJSON_GetObjectItem(root, "usuarios");
+    cJSON *medicosArray = cJSON_GetObjectItem(root, "medicos");
+
+    int qtd_de_medicos;
+    printf("Quantos médicos deseja cadastrar? ");
+    scanf("%d",&qtd_de_medicos);
+
+    for (int i=0;i<qtd_de_medicos;i++) {
+        system("cls");
+
+        cJSON *novoUsuario = cJSON_CreateObject();
+        cJSON *novoMedico = cJSON_CreateObject();
+
+        printf("\n --- Cadastrando Médico(a) %d de %d",i+1,qtd_de_medicos);
+        printf("\nInsira o Nome do Médico(a): ");
+        scanf(" %[^\n]", medicosSistema[totalMedicos].nome);
+        printf("\nInsira a Idade do Médico(a): ");
+        scanf("%d", &medicosSistema[totalMedicos].idade);
+        printf("\nInsira a Especialidade do Médico(a): ");
+        scanf(" %s", medicosSistema[totalMedicos].especialidade);
+        printf("\nInsira o CRM do Médico(a): ");
+        scanf(" %s", medicosSistema[totalMedicos].crm);
+
+        while (1) {
+            int repetido = false;
+            printf("\nInsira o Login do Usuário do Médico(a): ");
+            scanf(" %s", medicosSistema[totalMedicos].login);
+
+            for (int i=0;i<totalUsuarios;i++) {
+                if (strcmp(medicosSistema[totalMedicos].login, usuariosSistema[i].login) == 0) {
+                    repetido = true;
+                    printf("Este login já existe!\n");
+                    break;
+                }
+            }
+            if (repetido == false) {
+                break;
+            }
+        }
+
+        strcpy(usuariosSistema[totalUsuarios].login, medicosSistema[totalMedicos].login);
+        printf("\nInsira a Senha do Usuário do Médico(a): ");
+        scanf(" %s", usuariosSistema[totalUsuarios].senha);
+        strcpy(usuariosSistema[totalUsuarios].tipo, "medico");
+
+        // Objeto do Medico
+        cJSON_AddStringToObject(novoMedico, "login", medicosSistema[totalMedicos].login);
+        cJSON_AddStringToObject(novoMedico, "nome", medicosSistema[totalMedicos].nome);
+        cJSON_AddNumberToObject(novoMedico, "idade", medicosSistema[totalMedicos].idade);
+        cJSON_AddStringToObject(novoMedico, "especialidade", medicosSistema[totalMedicos].especialidade);
+        cJSON_AddStringToObject(novoMedico, "crm", medicosSistema[totalMedicos].crm);
+
+        // Objeto do Usuário
+        cJSON_AddStringToObject(novoUsuario, "login", usuariosSistema[totalUsuarios].login);
+        cJSON_AddStringToObject(novoUsuario, "senha", usuariosSistema[totalUsuarios].senha);
+        cJSON_AddStringToObject(novoUsuario, "tipo", usuariosSistema[totalUsuarios].tipo);
+
+        // Adicionando os objetos ao JSON
+        cJSON_AddItemToArray(usuariosArray, novoUsuario);
+        cJSON_AddItemToArray(medicosArray, novoMedico);
+
+        printf("\nMédico %s cadastrado com sucesso!\n\n", medicosSistema[totalMedicos].nome);
+        system("pause");
+
+        totalUsuarios++;
+        totalMedicos++;
+
+    }
+
+    // Salvar tudo no json
+    FILE *fileOut = fopen("informacoes.json","w");
+    char *jsonAtualizado = cJSON_Print(root);
+    fprintf(fileOut, "%s", jsonAtualizado);
+
+    fclose(fileOut);
+    free(jsonAtualizado);
+    cJSON_Delete(root);
 
 }
 
@@ -649,7 +777,7 @@ void menuRECEPCAO() {
         printf(" ---> MENU RECEPÇÃO <---\n");
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
-        printf(" 3- Ver Pacientes");
+        printf(" 3- Ver Pacientes\n");
         printf(" 0- Sair\n");
         printf("\n Digite a opção: ");
         scanf("%d", &opcao);
