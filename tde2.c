@@ -1342,6 +1342,44 @@ void menuENFERMEIRO() {
 
 }
 
+void menuRECEPCAO() {
+    int opcao;
+
+    do {
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> MENU RECEPÇÃO <---\n");
+        printf(" 1- Cadastrar Paciente\n");
+        printf(" 2- Excluir Paciente\n");
+        printf(" 3- Ver Pacientes");
+        printf(" 0- Sair\n");
+        printf("\n Digite a opção: ");
+        scanf("%d", &opcao);
+        
+        switch(opcao) {
+            case 0:
+                printf("\n Saindo do sistema...\n");
+                system("pause");
+                credenciais();
+                break;
+            case 1:
+                cadastrarPaciente();
+                break;
+            case 2:
+                excluirPaciente();
+                break;
+            case 3:
+                verPacientes();
+                break;
+            default:
+                printf("\n Opção inválida\n\n");
+                system("pause");
+        }
+    } while (opcao != 0);
+
+}
+
+
 int main() {
     system("chcp 65001 > nul");
     SetConsoleOutputCP(65001);
