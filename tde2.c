@@ -22,7 +22,6 @@ typedef struct {
     char senha[30];
     char tipo[20];
 } Usuario;
-Usuario usuarios;
 
 //Declaração das Funções
 void credenciais();
@@ -46,6 +45,7 @@ bool usuarioExiste(const char* login);
 char titulo[50] = "SISTEMA HOSPITALAR";
 int totalUsuarios = 0;
 Usuario usuariosSistema[50];
+Usuario usuarios;
 Usuario usuarioLogado;
 Paciente pacientesSistema[100];
 
@@ -317,7 +317,8 @@ void cadastrarMedico() {
     int idadeMedico, totalMedicos;
 
     system("cls");
-    printf(" [-------------- CADASTRAR MÉDICO(A) --------------]\n\n");
+    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" ---> CADASTRAR MÉDICO(A) <---\n");
 
     // Tenta abrir o arquivo para leitura para ver se ele já existe
     FILE *file = fopen("medicos.json", "rb"); // "rb" para ler em modo binário
@@ -1255,7 +1256,7 @@ void menuADM() {
         
         switch(opcao) {
             case 0:
-                printf("\n Saindo do sistema...\n");
+                printf("\n Saindo do sistema...\n\n");
                 system("pause");
                 credenciais();
                 break;
@@ -1290,7 +1291,7 @@ void menuMEDICO() {
         
         switch(opcao) {
             case 0:
-                printf("\n Saindo do sistema...\n");
+                printf("\n Saindo do sistema...\n\n");
                 system("pause");
                 credenciais();
                 break;
@@ -1323,7 +1324,7 @@ void menuENFERMEIRO() {
         
         switch(opcao) {
             case 0:
-                printf("\n Saindo do sistema...\n");
+                printf("\n Saindo do sistema...\n\n");
                 system("pause");
                 credenciais();
                 break;
@@ -1332,43 +1333,6 @@ void menuENFERMEIRO() {
                 break;
             case 2:
                 gerenciarPacientesNosLeitos();
-                break;
-            default:
-                printf("\n Opção inválida\n\n");
-                system("pause");
-        }
-    } while (opcao != 0);
-
-}
-
-void menuRECEPCAO() {
-    int opcao;
-
-    do {
-        system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
-        printf(" ---> MENU RECEPÇÃO <---\n");
-        printf(" 1- Cadastrar Paciente\n");
-        printf(" 2- Excluir Paciente\n");
-        printf(" 3- Ver Pacientes");
-        printf(" 0- Sair\n");
-        printf("\n Digite a opção: ");
-        scanf("%d", &opcao);
-        
-        switch(opcao) {
-            case 0:
-                printf("\n Saindo do sistema...\n");
-                system("pause");
-                credenciais();
-                break;
-            case 1:
-                cadastrarPaciente();
-                break;
-            case 2:
-                excluirPaciente();
-                break;
-            case 3:
-                verPacientes();
                 break;
             default:
                 printf("\n Opção inválida\n\n");
