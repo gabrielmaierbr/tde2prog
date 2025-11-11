@@ -199,16 +199,6 @@ void lerUsuariosJSON() {
     free(buffer);
 }
 
-bool usuarioExiste(const char* login) {
-    for (int i = 0; i < totalUsuarios; i++) {
-        // strcmp retorna 0 se as strings forem idênticas
-        if (strcmp(usuariosSistema[i].login, login) == 0) {
-            return true; // Encontrou um usuário com este login
-        }
-    }
-    return false; // Não encontrou
-}
-
 char* lerSenhaComMascara() {
     static char senha[30];
     int i = 0;
@@ -677,54 +667,6 @@ void cadastrarRecepcionista() {
 
 }
 
-bool cadastrarLogineSenha(Usuario usuarios, char *tipo) {
-
-    cJSON *usuario_json =  lerArquivoJson("usuarios.json"); // Carrega os usuários existentes
-    cJSON *usuarios_array = cJSON_GetObjectItemCaseSensitive(usuario_json, "usuarios");
-    if (!cJSON_IsArray(usuarios_array)) {
-        fprintf(stderr, "Erro: A chave 'usuarios' não é um array no JSON.\n");
-        cJSON_Delete(usuario_json);
-        return FALSE;
-    }{   
-    if (usuarioExiste(usuarios.login)) {
-        printf("Erro: O login '%s' já existe. Escolha outro login.\n", usuarios.login);
-        cJSON_Delete(usuario_json);
-        return FALSE;
-    } else {
-        // Continua o processo de cadastro
-        // Cria um novo objeto JSON para o usuário
-        cJSON *usuario_obj = cJSON_CreateObject();
-        cJSON_AddStringToObject(usuario_obj, "login", usuarios.login);
-        cJSON_AddStringToObject(usuario_obj, "senha", usuarios.senha);
-        cJSON_AddStringToObject(usuario_obj, "tipo", tipo);
-        // Adiciona o objeto do novo usuário ao array de usuários
-        cJSON_AddItemToArray(usuarios_array, usuario_obj);
-        // Converte o objeto cJSON modificado de volta para uma string formatada
-        char *json_string_modificado = cJSON_Print(usuario_json);
-        if (json_string_modificado == NULL) {
-            fprintf(stderr, "Erro ao gerar a string JSON.\n");
-            cJSON_Delete(usuario_json);
-            return FALSE;
-        }
-        // Abre o arquivo em modo de escrita ("w") para sobrescrever com o conteúdo atualizado
-        FILE *file = fopen("usuarios.json", "w");
-        if (file == NULL) {
-            perror("Erro ao abrir o arquivo para escrita");
-            cJSON_Delete(usuario_json);
-            free(json_string_modificado);
-            return FALSE;
-
-            fputs(json_string_modificado, file);
-            fclose(file);
-            // Libera a memória alocada pela cJSON
-            free(json_string_modificado);
-            cJSON_Delete(usuario_json);
-            return TRUE;
-            }
-        }
-    }
-}
-
 void excluirUsuario() {
     int opcao;
     while(1) {
@@ -1031,42 +973,6 @@ void gerenciarLeitos() {
         }
     }
 }
-
-// Função auxiliar para ler um arquivo JSON completo
-// Retorna o objeto cJSON raiz ou NULL em caso de erro.
-cJSON* lerArquivoJson(const char* nomeArquivo) {
-    FILE *file = fopen(nomeArquivo, "rb");
-    if (file == NULL) {
-        // Retorna NULL se o arquivo não existir, será tratado na função principal
-        return NULL; 
-    }
-
-    fseek(file, 0, SEEK_END);
-    long tamanho = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char *buffer = (char *)malloc(tamanho + 1);
-    if (buffer == NULL) {
-        fprintf(stderr, "Erro de alocação de memória para ler %s\n", nomeArquivo);
-        fclose(file);
-        return NULL;
-    }
-
-    fread(buffer, 1, tamanho, file);
-    fclose(file);
-    buffer[tamanho] = '\0';
-
-    cJSON *json = cJSON_Parse(buffer);
-    free(buffer);
-
-    if (json == NULL) {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        fprintf(stderr, "Erro ao analisar JSON de %s: %s\n", nomeArquivo, error_ptr);
-    }
-    
-    return json;
-}
-
 
 void criarLeito() {
     // --- ETAPA 1: CARREGAR OS MÉDICOS DE medicos.json ---
