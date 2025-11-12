@@ -1,0 +1,84 @@
+{
+	"usuarios":	[{
+			"login":	"admin",
+			"senha":	"adm123",
+			"tipo":	"admin"
+		}, {
+			"login":	"mega",
+			"senha":	"123",
+			"tipo":	"recepcionista"
+		}, {
+			"login":	"mattiap",
+			"senha":	"123321",
+			"tipo":	"recepcionista"
+		}, {
+			"login":	"gabrielp",
+			"senha":	"12345",
+			"tipo":	"recepcionista"
+		}, {
+			"login":	"leozin",
+			"senha":	"5555",
+			"tipo":	"enfermeiro"
+		}, {
+			"login":	"maia",
+			"senha":	"1111",
+			"tipo":	"enfermeiro"
+		}, {
+			"login":	"natypoletto",
+			"senha":	"2222",
+			"tipo":	"medico"
+		}, {
+			"login":	"aninha",
+			"senha":	"123333",
+			"tipo":	"enfermeiro"
+		}, {
+			"login":	"michelep",
+			"senha":	"9999",
+			"tipo":	"enfermeiro"
+		}],
+	"medicos":	[{
+			"login":	"natypoletto",
+			"nome":	"Natalia",
+			"idade":	26,
+			"especialidade":	"ginecologista",
+			"crm":	"1233321"
+		}],
+	"enfermeiros":	[{
+			"login":	"leozin",
+			"nome":	"Leozin",
+			"idade":	22,
+			"especialidade":	"vacinador",
+			"crm":	"123456"
+		}, {
+			"login":	"maia",
+			"nome":	"Maia",
+			"idade":	23,
+			"especialidade":	"vacinador",
+			"crm":	"5332434"
+		}, {
+			"login":	"aninha",
+			"nome":	"Ana Maria",
+			"idade":	55,
+			"especialidade":	"Agulhada",
+			"crm":	"111223"
+		}, {
+			"login":	"michelep",
+			"nome":	"Michele Poletto",
+			"idade":	54,
+			"especialidade":	"tranquilizador",
+			"crm":	"123345"
+		}],
+	"recepcionistas":	[{
+			"login":	"mega",
+			"nome":	"Megazord",
+			"idade":	29
+		}, {
+			"login":	"mattiap",
+			"nome":	"Mattia",
+			"idade":	23
+		}, {
+			"login":	"gabrielp",
+			"nome":	"Gabriel",
+			"idade":	25
+		}]
+}

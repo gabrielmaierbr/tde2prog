@@ -1238,6 +1238,81 @@ void excluirRecepcionista() {
 }
 
 void verUsuarios() {
+    int escolhaLogin;
+    while(1) {
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
+        printf("Escolha um usuário para ver suas informações: \n\n");
+        for (int i=1;i<totalUsuarios;i++) {
+            printf("%d. %s\n", i, usuariosSistema[i].login);
+        }
+        printf("\nEscolha: ");
+        scanf("%d",&escolhaLogin);
+
+        if (escolhaLogin>=1 && escolhaLogin<=totalUsuarios-1) {
+            break;
+        }
+
+        printf("\nOpção inválida!\n\n");
+        system("pause");
+    }
+
+    char visualizarLogin[20];
+    char visualizarTipo[20];
+    strcpy(visualizarLogin, usuariosSistema[escolhaLogin].login);
+    strcpy(visualizarTipo, usuariosSistema[escolhaLogin].tipo);
+
+    int indiceVisualizar;
+    if (strcmp(visualizarTipo, "medico") == 0) {
+        for (int i=0;i<totalMedicos;i++) {
+            if (strcmp(visualizarLogin, medicosSistema[i].login) == 0)  {
+                indiceVisualizar = i;
+                break;
+            }
+        }
+
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
+        printf(" - Dados do usuário %s:\n", medicosSistema[indiceVisualizar].login);
+        printf("Nome         : %s\n",medicosSistema[indiceVisualizar].nome);
+        printf("Idade        : %d\n",medicosSistema[indiceVisualizar].idade);
+        printf("Especialidade: %s\n",medicosSistema[indiceVisualizar].especialidade);
+        printf("CRM          : %s\n\n",medicosSistema[indiceVisualizar].crm);
+    } else if (strcmp(visualizarTipo, "enfermeiro") == 0) {
+        for (int i=0;i<totalEnfermeiros;i++) {
+            if (strcmp(visualizarLogin, enfermeirosSistema[i].login) == 0) {
+                indiceVisualizar = i;
+                break;
+            }
+        }
+
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
+        printf(" - Dados do usuário %s:\n", enfermeirosSistema[indiceVisualizar].login);
+        printf("Nome         : %s\n",enfermeirosSistema[indiceVisualizar].nome);
+        printf("Idade        : %d\n",enfermeirosSistema[indiceVisualizar].idade);
+        printf("Especialidade: %s\n",enfermeirosSistema[indiceVisualizar].especialidade);
+        printf("CRM          : %s\n\n",enfermeirosSistema[indiceVisualizar].coren);
+    } else if (strcmp(visualizarTipo, "recepcionista") == 0) {
+        for (int i=0;i<totalRecepcionistas;i++) {
+            if (strcmp(visualizarLogin, recepcionistasSistema[i].login) == 0) {
+                indiceVisualizar = i;
+                break;
+            }
+        }
+        
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
+        printf(" - Dados do usuário %s:\n", recepcionistasSistema[indiceVisualizar].login);
+        printf("Nome         : %s\n",recepcionistasSistema[indiceVisualizar].nome);
+        printf("Idade        : %d\n\n",recepcionistasSistema[indiceVisualizar].idade);
+    }
+    
+    system("pause");
 
 }
 //--------------------------- Gerenciar Pacientes ---------------------------
