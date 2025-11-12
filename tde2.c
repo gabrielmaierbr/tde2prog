@@ -59,6 +59,7 @@ void gerenciarLeitos(), criarLeito(), excluirLeito();
 void gerenciarPacientesNosLeitos(), alocarPacienteAoLeito(), tirarPacienteDoLeito();
 void darAlta();
 cJSON* lerArquivoJson(const char* nomeArquivo);
+void salvarArquivoJson(const char* nomeArquivo, cJSON* root_json);
 bool cadastrarLogineSenha(const char* login, const char* senha, const char* tipo);
 bool usuarioExiste(const char* login);
 bool cadastrarPacienteJSON(Paciente novoPaciente);
@@ -220,6 +221,23 @@ void lerUsuariosJSON() {
     
     cJSON_Delete(root);
     free(buffer);
+}
+
+void salvarArquivoJson(const char* nomeArquivo, cJSON* root_json) {
+    char *json_string = cJSON_Print(root_json);
+    if (json_string == NULL) {
+        fprintf(stderr, "Erro ao gerar a string JSON para %s.\n", nomeArquivo);
+        return;
+    }
+
+    FILE* file = fopen(nomeArquivo, "w");
+    if (file == NULL) {
+        perror("Erro ao abrir arquivo para escrita");
+    } else {
+        fputs(json_string, file);
+        fclose(file);
+    }
+    free(json_string);
 }
 
 bool usuarioExiste(const char* login) {
@@ -1491,8 +1509,168 @@ void gerenciarPacientesNosLeitos() {
 
 }
 
-void alocarPacienteAoLeito() {
+// Inclua as funções auxiliares lerArquivoJson e salvarArquivoJson no seu código
+// (conforme a resposta anterior)
 
+void alocarPacienteAoLeito() {
+    system("cls");
+    printf(" [-------------- ALOCAR PACIENTE AO LEITO --------------]\n\n");
+
+    // --- ETAPA 1: LER E EXIBIR LEITOS DISPONÍVEIS ---
+    cJSON *leitos_json = lerArquivoJson("leitos.json");
+    if (leitos_json == NULL) {
+        printf("Erro: Arquivo 'leitos.json' não encontrado ou inválido.\n");
+        system("pause");
+        return;
+    }
+
+    cJSON *leitos_array = cJSON_GetObjectItemCaseSensitive(leitos_json, "leitos");
+    if (!cJSON_IsArray(leitos_array) || cJSON_GetArraySize(leitos_array) == 0) {
+        printf("Nenhum leito cadastrado.\n");
+        cJSON_Delete(leitos_json);
+        system("pause");
+        return;
+    }
+
+    int *leitos_disponiveis_indices = malloc(cJSON_GetArraySize(leitos_array) * sizeof(int));
+    int leitos_disponiveis_count = 0;
+
+    printf("Leitos Disponíveis:\n");
+    cJSON *leito_item;
+    int index_leito = 0;
+    cJSON_ArrayForEach(leito_item, leitos_array) {
+        cJSON *ocupado = cJSON_GetObjectItemCaseSensitive(leito_item, "ocupado");
+        if (cJSON_IsFalse(ocupado)) {
+            cJSON *nomeLeito = cJSON_GetObjectItemCaseSensitive(leito_item, "nomeLeito");
+            printf(" %d - %s\n", leitos_disponiveis_count + 1, nomeLeito->valuestring);
+            leitos_disponiveis_indices[leitos_disponiveis_count] = index_leito;
+            leitos_disponiveis_count++;
+        }
+        index_leito++;
+    }
+
+    if (leitos_disponiveis_count == 0) {
+        printf("\nNenhum leito desocupado no momento.\n");
+        cJSON_Delete(leitos_json);
+        free(leitos_disponiveis_indices);
+        system("pause");
+        return;
+    }
+
+    // --- ETAPA 2: OBTER A ESCOLHA DO LEITO ---
+    int escolha_leito;
+    do {
+        printf("\nSelecione o leito para alocar o paciente (1 a %d): ", leitos_disponiveis_count);
+        scanf("%d", &escolha_leito);
+    } while (escolha_leito < 1 || escolha_leito > leitos_disponiveis_count);
+
+    int indice_real_leito = leitos_disponiveis_indices[escolha_leito - 1];
+    cJSON *leito_selecionado = cJSON_GetArrayItem(leitos_array, indice_real_leito);
+
+
+    // --- ETAPA 3: LER E EXIBIR PACIENTES DISPONÍVEIS (COM ALTERAÇÕES) ---
+    cJSON *pacientes_json = lerArquivoJson("pacientes.json");
+    if (pacientes_json == NULL) { /* Lidar com erro... */ return; }
+    cJSON *pacientes_array = cJSON_GetObjectItemCaseSensitive(pacientes_json, "pacientes");
+    if (!cJSON_IsArray(pacientes_array)) { /* Lidar com erro... */ return; }
+
+    int *pacientes_disponiveis_indices = malloc(cJSON_GetArraySize(pacientes_array) * sizeof(int));
+    int pacientes_disponiveis_count = 0;
+    
+    printf("\nPacientes aguardando alocação:\n");
+    cJSON *paciente_item;
+    int index_paciente = 0;
+    cJSON_ArrayForEach(paciente_item, pacientes_array) {
+        cJSON *status = cJSON_GetObjectItemCaseSensitive(paciente_item, "status");
+        if (cJSON_IsString(status) && strcmp(status->valuestring, "Ativo") == 0) {
+            
+            // --- INÍCIO DAS MODIFICAÇÕES ---
+            
+            // 1. Obter todos os campos necessários do JSON do paciente
+            cJSON *nome = cJSON_GetObjectItemCaseSensitive(paciente_item, "nome");
+            cJSON *prioridade = cJSON_GetObjectItemCaseSensitive(paciente_item, "prioridade");
+            cJSON *diagnostico = cJSON_GetObjectItemCaseSensitive(paciente_item, "diagnostico"); // <-- NOVO
+
+            // 2. Preparar as strings para exibição, com valores padrão para segurança
+            const char *nome_str = nome->valuestring;
+            const char *diagnostico_str = "N/A";
+            char prioridade_str[20] = "N/A";
+
+            // Converte o número da prioridade para uma string legível
+            if (cJSON_IsNumber(prioridade)) {
+                switch(prioridade->valueint) {
+                    case 4: strcpy(prioridade_str, "Emergência"); break;
+                    case 3: strcpy(prioridade_str, "Alta"); break;
+                    case 2: strcpy(prioridade_str, "Média"); break;
+                    case 1: strcpy(prioridade_str, "Baixa"); break;
+                    default: strcpy(prioridade_str, "Desconhecida"); break;
+                }
+            }
+            
+            // Verifica se o diagnóstico existe e é uma string antes de usá-lo
+            if (cJSON_IsString(diagnostico) && diagnostico->valuestring != NULL) {
+                diagnostico_str = diagnostico->valuestring;
+            }
+
+            // 3. Imprimir a linha formatada com todas as informações
+            printf(" %d - %s | Prioridade: %s | Diagnóstico: %s\n",
+                   pacientes_disponiveis_count + 1,
+                   nome_str,
+                   prioridade_str,
+                   diagnostico_str);
+            
+            // --- FIM DAS MODIFICAÇÕES ---
+
+            pacientes_disponiveis_indices[pacientes_disponiveis_count] = index_paciente;
+            pacientes_disponiveis_count++;
+        }
+        index_paciente++;
+    }
+
+    if (pacientes_disponiveis_count == 0) {
+        printf("\nNenhum paciente aguardando alocação no momento.\n");
+        // Libera a memória já alocada antes de sair
+        cJSON_Delete(leitos_json);
+        cJSON_Delete(pacientes_json);
+        free(leitos_disponiveis_indices);
+        free(pacientes_disponiveis_indices);
+        system("pause");
+        return;
+    }
+
+    // --- ETAPA 4: OBTER A ESCOLHA DO PACIENTE ---
+    int escolha_paciente;
+    do {
+        printf("\nSelecione o paciente para alocar (1 a %d): ", pacientes_disponiveis_count);
+        scanf("%d", &escolha_paciente);
+    } while (escolha_paciente < 1 || escolha_paciente > pacientes_disponiveis_count);
+
+    int indice_real_paciente = pacientes_disponiveis_indices[escolha_paciente - 1];
+    cJSON *paciente_selecionado = cJSON_GetArrayItem(pacientes_array, indice_real_paciente);
+
+
+    // --- ETAPA 5: MODIFICAR OS DADOS EM MEMÓRIA ---
+    const char *nome_paciente_selecionado = cJSON_GetObjectItem(paciente_selecionado, "nome")->valuestring;
+    cJSON_ReplaceItemInObject(leito_selecionado, "ocupado", cJSON_CreateTrue());
+    cJSON_ReplaceItemInObject(leito_selecionado, "nomePacienteNoLeito", cJSON_CreateString(nome_paciente_selecionado));
+    cJSON_ReplaceItemInObject(paciente_selecionado, "status", cJSON_CreateString("Alocado"));
+
+    printf("\nPaciente '%s' alocado com sucesso ao '%s'!\n", 
+        nome_paciente_selecionado,
+        cJSON_GetObjectItem(leito_selecionado, "nomeLeito")->valuestring);
+
+    // --- ETAPA 6: SALVAR AS ALTERAÇÕES NOS ARQUIVOS ---
+    salvarArquivoJson("leitos.json", leitos_json);
+    salvarArquivoJson("pacientes.json", pacientes_json);
+    printf("Arquivos 'leitos.json' e 'pacientes.json' atualizados.\n");
+
+    // --- ETAPA 7: LIBERAR TODA A MEMÓRIA ---
+    cJSON_Delete(leitos_json);
+    cJSON_Delete(pacientes_json);
+    free(leitos_disponiveis_indices);
+    free(pacientes_disponiveis_indices);
+
+    system("pause");
 }
 
 void tirarPacienteDoLeito() {
