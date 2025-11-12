@@ -526,14 +526,14 @@ void cadastrarMedico() {
         printf("\nInsira a Idade do Médico(a): ");
         scanf("%d", &medicosSistema[totalMedicos].idade);
         printf("\nInsira a Especialidade do Médico(a): ");
-        scanf(" %s", medicosSistema[totalMedicos].especialidade);
+        scanf(" %[^\n]", medicosSistema[totalMedicos].especialidade);
         printf("\nInsira o CRM do Médico(a): ");
-        scanf(" %s", medicosSistema[totalMedicos].crm);
+        scanf(" %[^\n]", medicosSistema[totalMedicos].crm);
 
         while (1) {
             int repetido = false;
             printf("\nInsira o Login do Usuário do Médico(a): ");
-            scanf(" %s", medicosSistema[totalMedicos].login);
+            scanf(" %[^\n]", medicosSistema[totalMedicos].login);
 
             for (int i=0;i<totalUsuarios;i++) {
                 if (strcmp(medicosSistema[totalMedicos].login, usuariosSistema[i].login) == 0) {
@@ -549,7 +549,7 @@ void cadastrarMedico() {
 
         strcpy(usuariosSistema[totalUsuarios].login, medicosSistema[totalMedicos].login);
         printf("\nInsira a Senha do Usuário do Médico(a): ");
-        scanf(" %s", usuariosSistema[totalUsuarios].senha);
+        scanf(" %[^\n]", usuariosSistema[totalUsuarios].senha);
         strcpy(usuariosSistema[totalUsuarios].tipo, "medico");
 
         // Objeto do Medico
@@ -642,14 +642,14 @@ void cadastrarEnfermeiro() {
         printf("\nInsira a Idade do Enfermeiro(a): ");
         scanf("%d", &enfermeirosSistema[totalEnfermeiros].idade);
         printf("\nInsira a Especialidade do Enfermeiro(a): ");
-        scanf(" %s", enfermeirosSistema[totalEnfermeiros].especialidade);
+        scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].especialidade);
         printf("\nInsira o Coren do Enfermeiro(a): ");
-        scanf(" %s", enfermeirosSistema[totalEnfermeiros].coren);
+        scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].coren);
 
         while (1) {
             int repetido = false;
             printf("\nInsira o Login do Usuário do Enfermeiro(a): ");
-            scanf(" %s", enfermeirosSistema[totalEnfermeiros].login);
+            scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].login);
 
             for (int i=0;i<totalUsuarios;i++) {
                 if (strcmp(enfermeirosSistema[totalEnfermeiros].login, usuariosSistema[i].login) == 0) {
@@ -665,7 +665,7 @@ void cadastrarEnfermeiro() {
 
         strcpy(usuariosSistema[totalUsuarios].login, enfermeirosSistema[totalEnfermeiros].login);
         printf("\nInsira a Senha do Usuário do Médico(a): ");
-        scanf(" %s", usuariosSistema[totalUsuarios].senha);
+        scanf(" %[^\n]", usuariosSistema[totalUsuarios].senha);
         strcpy(usuariosSistema[totalUsuarios].tipo, "enfermeiro");
 
         // Objeto do Enfermeiro
@@ -673,7 +673,7 @@ void cadastrarEnfermeiro() {
         cJSON_AddStringToObject(novoEnfermeiro, "nome", enfermeirosSistema[totalEnfermeiros].nome);
         cJSON_AddNumberToObject(novoEnfermeiro, "idade", enfermeirosSistema[totalEnfermeiros].idade);
         cJSON_AddStringToObject(novoEnfermeiro, "especialidade", enfermeirosSistema[totalEnfermeiros].especialidade);
-        cJSON_AddStringToObject(novoEnfermeiro, "crm", enfermeirosSistema[totalEnfermeiros].coren);
+        cJSON_AddStringToObject(novoEnfermeiro, "coren", enfermeirosSistema[totalEnfermeiros].coren);
 
         // Objeto do Usuário
         cJSON_AddStringToObject(novoUsuario, "login", usuariosSistema[totalUsuarios].login);
@@ -761,7 +761,7 @@ void cadastrarRecepcionista() {
         while (1) {
             int repetido = false;
             printf("\nInsira o Login do Usuário do Recepcionista: ");
-            scanf(" %s", recepcionistasSistema[totalRecepcionistas].login);
+            scanf(" %[^\n]", recepcionistasSistema[totalRecepcionistas].login);
 
             for (int i=0;i<totalUsuarios;i++) {
                 if (strcmp(recepcionistasSistema[totalRecepcionistas].login, usuariosSistema[i].login) == 0) {
@@ -777,7 +777,7 @@ void cadastrarRecepcionista() {
 
         strcpy(usuariosSistema[totalUsuarios].login, recepcionistasSistema[totalRecepcionistas].login);
         printf("\nInsira a Senha do Usuário do Recepcionista: ");
-        scanf(" %s", usuariosSistema[totalUsuarios].senha);
+        scanf(" %[^\n]", usuariosSistema[totalUsuarios].senha);
         strcpy(usuariosSistema[totalUsuarios].tipo, "recepcionista");
 
         // Objeto do Recepcionista
@@ -1243,7 +1243,7 @@ void verUsuarios() {
         system("cls");
         printf(" [---------- %s -----------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
-        printf("Escolha um usuário para ver suas informações: \n\n");
+        printf("Escolha um usuário para ver suas informações [0 para voltar]: \n\n");
         for (int i=1;i<totalUsuarios;i++) {
             printf("%d. %s\n", i, usuariosSistema[i].login);
         }
@@ -1252,6 +1252,9 @@ void verUsuarios() {
 
         if (escolhaLogin>=1 && escolhaLogin<=totalUsuarios-1) {
             break;
+        }
+        if (escolhaLogin == 0) {
+            return;
         }
 
         printf("\nOpção inválida!\n\n");
