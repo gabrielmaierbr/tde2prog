@@ -79,7 +79,7 @@ void excluirLeito();
 void verLeitos();
 void gerenciarPacientesNosLeitos();
 void alocarPacienteAoLeito();
-void tirarPacienteDoLeito();
+void desalocarPacienteDoLeito();
 
 void darAlta();
 
@@ -127,7 +127,7 @@ void credenciais() {
 
     while (!autenticado) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" Login: ");
         scanf("%s", login);
         
@@ -145,7 +145,10 @@ void credenciais() {
                 autenticado = 1;
                 usuarioLogado = usuariosSistema[i];
                 
-                printf("\n Login realizado com sucesso. Bem-vindo, %s!\n\n", login);
+                printf("\n----------------------------------");
+                printf("\n Login realizado com sucesso.\n");
+                printf("  --> Seja bem-vindo, %s!\n", login);
+                printf("----------------------------------\n\n");
                 system("pause");
                 
                 if (strcmp(usuarioLogado.tipo, "admin") == 0) {
@@ -497,7 +500,7 @@ void gerenciarUsuarios() {
     int opcao;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> GERENCIAR USUÁRIO <---\n\n");
         printf(" 1- Cadastrar Usuário\n");
         printf(" 2- Excluir Usuário\n");
@@ -525,7 +528,7 @@ void cadastrarUsuario() {
     int opcao;
     while(1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> CADASTRAR USUÁRIO <---\n");
         printf("Qual usuário deseja cadastrar?\n\n");
         printf(" 1- Médico\n");
@@ -553,7 +556,7 @@ void cadastrarUsuario() {
 
 void cadastrarMedico() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> CADASTRAR MÉDICO(A) <---\n");
 
     FILE *file = fopen("informacoes.json","r");
@@ -600,7 +603,7 @@ void cadastrarMedico() {
         cJSON *novoUsuario = cJSON_CreateObject();
         cJSON *novoMedico = cJSON_CreateObject();
 
-        printf("\n --- Cadastrando Médico(a) %d de %d",i+1,qtd_de_medicos);
+        printf("\n --- Cadastrando Médico(a) %d de %d ---",i+1,qtd_de_medicos);
         printf("\nInsira o Nome do Médico(a): ");
         scanf(" %[^\n]", medicosSistema[totalMedicos].nome);
         printf("\nInsira a Idade do Médico(a): ");
@@ -648,7 +651,9 @@ void cadastrarMedico() {
         cJSON_AddItemToArray(usuariosArray, novoUsuario);
         cJSON_AddItemToArray(medicosArray, novoMedico);
 
-        printf("\nMédico %s cadastrado com sucesso!\n\n", medicosSistema[totalMedicos].nome);
+        printf("\n----------------------------------------");
+        printf("\nMédico(a) %s cadastrado com sucesso!\n", medicosSistema[totalMedicos].nome);
+        printf("----------------------------------------\n\n");
         system("pause");
 
         totalUsuarios++;
@@ -669,7 +674,7 @@ void cadastrarMedico() {
 
 void cadastrarEnfermeiro() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> CADASTRAR ENFERMEIRO(A) <---\n");
 
     FILE *file = fopen("informacoes.json","r");
@@ -716,7 +721,7 @@ void cadastrarEnfermeiro() {
         cJSON *novoUsuario = cJSON_CreateObject();
         cJSON *novoEnfermeiro = cJSON_CreateObject();
 
-        printf("\n --- Cadastrando Enfermeiro(a) %d de %d",i+1,qtd_de_enfermeiros);
+        printf("\n --- Cadastrando Enfermeiro(a) %d de %d ---",i+1,qtd_de_enfermeiros);
         printf("\nInsira o Nome do Enfermeiro(a): ");
         scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].nome);
         printf("\nInsira a Idade do Enfermeiro(a): ");
@@ -764,7 +769,9 @@ void cadastrarEnfermeiro() {
         cJSON_AddItemToArray(usuariosArray, novoUsuario);
         cJSON_AddItemToArray(enfermeirosArray, novoEnfermeiro);
 
-        printf("\nEnfermeiro %s cadastrado com sucesso!\n\n", enfermeirosSistema[totalEnfermeiros].nome);
+        printf("\n-------------------------------------------");
+        printf("\nEnfermeiro(a) %s cadastrado com sucesso!\n", enfermeirosSistema[totalEnfermeiros].nome);
+        printf("-------------------------------------------\n\n");
         system("pause");
 
         totalUsuarios++;
@@ -785,7 +792,7 @@ void cadastrarEnfermeiro() {
 
 void cadastrarRecepcionista() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> CADASTRAR RECEPCIONISTA <---\n");
 
     FILE *file = fopen("informacoes.json","r");
@@ -832,7 +839,7 @@ void cadastrarRecepcionista() {
         cJSON *novoUsuario = cJSON_CreateObject();
         cJSON *novoRecepcionista = cJSON_CreateObject();
 
-        printf("\n --- Cadastrando Recepcionista %d de %d",i+1,qtd_de_recepcionistas);
+        printf("\n --- Cadastrando Recepcionista %d de %d ---",i+1,qtd_de_recepcionistas);
         printf("\nInsira o Nome do Recepcionista: ");
         scanf(" %[^\n]", recepcionistasSistema[totalRecepcionistas].nome);
         printf("\nInsira a Idade do Recepcionista: ");
@@ -874,7 +881,9 @@ void cadastrarRecepcionista() {
         cJSON_AddItemToArray(usuariosArray, novoUsuario);
         cJSON_AddItemToArray(recepcionistasArray, novoRecepcionista);
 
-        printf("\nRecepcionista %s cadastrado com sucesso!\n\n", recepcionistasSistema[totalRecepcionistas].nome);
+        printf("\n--------------------------------------------");
+        printf("\nRecepcionista %s cadastrado com sucesso!\n", recepcionistasSistema[totalRecepcionistas].nome);
+        printf("--------------------------------------------\n\n");
         system("pause");
 
         totalUsuarios++;
@@ -897,7 +906,7 @@ void excluirUsuario() {
     int opcao;
     while(1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR USUÁRIO <---\n");
         printf("Qual usuário deseja excluir?\n\n");
         printf(" 1- Médico\n");
@@ -924,7 +933,7 @@ void excluirUsuario() {
 
 void excluirMedico() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> EXCLUIR MÉDICO(A) <---\n");
 
     // Verifica se há médicos cadastrados
@@ -938,13 +947,13 @@ void excluirMedico() {
     int indiceExcluir;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR MÉDICO(A) <---\n");
         printf("Qual médico(a) deseja excluir [0 para voltar]?\n\n");
         for (int i=0;i<totalMedicos;i++) {
             printf("%d. %s\n",i+1,medicosSistema[i].nome);
         }
-        printf("Escolha: ");
+        printf("\nEscolha: ");
         scanf("%d",&indiceExcluir);
         if (indiceExcluir>=1 && indiceExcluir<=totalMedicos) {
             break;
@@ -956,11 +965,15 @@ void excluirMedico() {
         system("pause");
         system("cls");
     }
+    indiceExcluir -= 1;
+
+    char nomeExcluir[50];
+    strcpy(nomeExcluir, medicosSistema[indiceExcluir].nome);
     char loginExcluir[20];
-    strcpy(loginExcluir, medicosSistema[indiceExcluir-1].login);
+    strcpy(loginExcluir, medicosSistema[indiceExcluir].login);
 
     // Remove o médico da struct medicosSistema
-    for (int i=indiceExcluir-1;i<totalMedicos-1;i++) {
+    for (int i=indiceExcluir;i<totalMedicos-1;i++) {
         medicosSistema[i] = medicosSistema[i+1];
     }
     totalMedicos--;
@@ -1049,14 +1062,18 @@ void excluirMedico() {
     free(jsonAtualizado);
     cJSON_Delete(root);
 
-    printf("\nMédico '%s' excluído com sucesso!\n\n", loginExcluir);
+    printf("\n-------------------------------------------------");
+    printf("\nMédico '%s' excluído com sucesso!\n", nomeExcluir);
+    printf("-------------------------------------------------\n\n");
     system("pause");
+
+    excluirMedico();
 
 }
 
 void excluirEnfermeiro() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> EXCLUIR ENFERMEIRO(A) <---\n");
 
     // Verifica se há enfermeiros cadastrados
@@ -1070,13 +1087,13 @@ void excluirEnfermeiro() {
     int indiceExcluir;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR ENFERMEIRO(A) <---\n");
         printf("Qual enfermeiro(a) deseja excluir [0 para voltar]?\n\n");
         for (int i=0;i<totalEnfermeiros;i++) {
             printf("%d. %s\n",i+1,enfermeirosSistema[i].nome);
         }
-        printf("Escolha: ");
+        printf("\nEscolha: ");
         scanf("%d",&indiceExcluir);
         if (indiceExcluir>=1 && indiceExcluir<=totalEnfermeiros) {
             break;
@@ -1088,11 +1105,14 @@ void excluirEnfermeiro() {
         system("pause");
         system("cls");
     }
+    indiceExcluir -= 1;
+    char nomeExcluir[50];
+    strcpy(nomeExcluir,enfermeirosSistema[indiceExcluir].nome);
     char loginExcluir[20];
-    strcpy(loginExcluir, enfermeirosSistema[indiceExcluir-1].login);
+    strcpy(loginExcluir, enfermeirosSistema[indiceExcluir].login);
 
     // Remove o enfermeiro da struct enfermeirosSistema
-    for (int i=indiceExcluir-1;i<totalEnfermeiros-1;i++) {
+    for (int i=indiceExcluir;i<totalEnfermeiros-1;i++) {
         enfermeirosSistema[i] = enfermeirosSistema[i+1];
     }
     totalEnfermeiros--;
@@ -1181,14 +1201,18 @@ void excluirEnfermeiro() {
     free(jsonAtualizado);
     cJSON_Delete(root);
 
-    printf("\nEnfermeiro(a) '%s' excluído(a) com sucesso!\n\n", loginExcluir);
+    printf("\n----------------------------------------------------");
+    printf("\nEnfermeiro(a) '%s' excluído(a) com sucesso!\n", nomeExcluir);
+    printf("----------------------------------------------------\n\n");
     system("pause");
+
+    excluirEnfermeiro();
 
 }
 
 void excluirRecepcionista() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> EXCLUIR RECEPCIONISTA <---\n");
 
     // Verifica se há recepcionistas cadastrados
@@ -1202,13 +1226,13 @@ void excluirRecepcionista() {
     int indiceExcluir;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR RECEPCIONISTA <---\n");
         printf("Qual recepcionista deseja excluir [0 para voltar]?\n\n");
         for (int i=0;i<totalRecepcionistas;i++) {
             printf("%d. %s\n",i+1,recepcionistasSistema[i].nome);
         }
-        printf("Escolha: ");
+        printf("\nEscolha: ");
         scanf("%d",&indiceExcluir);
         if (indiceExcluir>=1 && indiceExcluir<=totalRecepcionistas) {
             break;
@@ -1220,11 +1244,15 @@ void excluirRecepcionista() {
         system("pause");
         system("cls");
     }
+    indiceExcluir -= 1;
+    char nomeExcluir[50];
+    strcpy(nomeExcluir, recepcionistasSistema[indiceExcluir].nome);
+
     char loginExcluir[20];
-    strcpy(loginExcluir, recepcionistasSistema[indiceExcluir-1].login);
+    strcpy(loginExcluir, recepcionistasSistema[indiceExcluir].login);
 
     // Remove o recepcionista da struct recepcionistasSistema
-    for (int i=indiceExcluir-1;i<totalRecepcionistas-1;i++) {
+    for (int i=indiceExcluir;i<totalRecepcionistas-1;i++) {
         recepcionistasSistema[i] = recepcionistasSistema[i+1];
     }
     totalRecepcionistas--;
@@ -1313,22 +1341,28 @@ void excluirRecepcionista() {
     free(jsonAtualizado);
     cJSON_Delete(root);
 
-    printf("\nRecepcionista '%s' excluído com sucesso!\n\n", loginExcluir);
+    printf("\n-------------------------------------------------");
+    printf("\nRecepcionista '%s' excluído com sucesso!\n", nomeExcluir);
+    printf("-------------------------------------------------\n\n");
     system("pause");
+
+    excluirRecepcionista();
 }
 
 void verUsuarios() {
-
-    if (totalUsuarios == 0) {
-    printf("\nNão há usuários cadastrados.\n\n");
-    system("pause");
-    return;
+    system("cls");
+    if (totalUsuarios == 1) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
+        printf("\nNão há usuários cadastrados.\n\n");
+        system("pause");
+        return;
     }
 
     int escolhaLogin;
     while(1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf("Escolha um usuário para ver suas informações [0 para voltar]: \n\n");
         for (int i=1;i<totalUsuarios;i++) {
@@ -1363,13 +1397,14 @@ void verUsuarios() {
         }
 
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", medicosSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",medicosSistema[indiceVisualizar].nome);
         printf("Idade        : %d\n",medicosSistema[indiceVisualizar].idade);
         printf("Especialidade: %s\n",medicosSistema[indiceVisualizar].especialidade);
-        printf("CRM          : %s\n\n",medicosSistema[indiceVisualizar].crm);
+        printf("CRM          : %s\n",medicosSistema[indiceVisualizar].crm);
+        printf(" --> Médico(a)\n\n");
     } else if (strcmp(visualizarTipo, "enfermeiro") == 0) {
         for (int i=0;i<totalEnfermeiros;i++) {
             if (strcmp(visualizarLogin, enfermeirosSistema[i].login) == 0) {
@@ -1379,13 +1414,14 @@ void verUsuarios() {
         }
 
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", enfermeirosSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",enfermeirosSistema[indiceVisualizar].nome);
         printf("Idade        : %d\n",enfermeirosSistema[indiceVisualizar].idade);
         printf("Especialidade: %s\n",enfermeirosSistema[indiceVisualizar].especialidade);
-        printf("CRM          : %s\n\n",enfermeirosSistema[indiceVisualizar].coren);
+        printf("CRM          : %s\n",enfermeirosSistema[indiceVisualizar].coren);
+        printf(" --> Enfermeiro(a)\n\n");
     } else if (strcmp(visualizarTipo, "recepcionista") == 0) {
         for (int i=0;i<totalRecepcionistas;i++) {
             if (strcmp(visualizarLogin, recepcionistasSistema[i].login) == 0) {
@@ -1395,14 +1431,17 @@ void verUsuarios() {
         }
         
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", recepcionistasSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",recepcionistasSistema[indiceVisualizar].nome);
-        printf("Idade        : %d\n\n",recepcionistasSistema[indiceVisualizar].idade);
+        printf("Idade        : %d\n",recepcionistasSistema[indiceVisualizar].idade);
+        printf(" --> Recepcionista\n\n");
     }
     
     system("pause");
+
+    verUsuarios();
 
 }
 //--------------------------- Gerenciar Pacientes ---------------------------
@@ -1411,7 +1450,7 @@ void gerenciarPacientes() {
     int opcao;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> GERENCIAR PACIENTES <---\n\n");
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
@@ -1437,7 +1476,7 @@ void gerenciarPacientes() {
 
 void cadastrarPaciente() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> CADASTRAR PACIENTE <---\n");
 
     FILE *file = fopen("informacoes.json","r");
@@ -1526,7 +1565,9 @@ void cadastrarPaciente() {
         // Adicionando o objeto ao JSON
         cJSON_AddItemToArray(pacientesArray, novoPaciente);
 
-        printf("\nPaciente %s cadastrado com sucesso!\n\n", pacientesSistema[totalPacientes].nome);
+        printf("\n-------------------------------------");
+        printf("\nPaciente %s cadastrado com sucesso!\n", pacientesSistema[totalPacientes].nome);
+        printf("-------------------------------------\n\n");
         system("pause");
 
         totalPacientes++;
@@ -1546,7 +1587,7 @@ void cadastrarPaciente() {
 
 void excluirPaciente() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> EXCLUIR PACIENTE <---\n");
 
     // Verifica se há pacientes cadastrados
@@ -1560,13 +1601,13 @@ void excluirPaciente() {
     int indiceExcluir;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR PACIENTE <---\n");
         printf("Qual paciente deseja excluir [0 para voltar]?\n\n");
         for (int i=0;i<totalPacientes;i++) {
             printf("%d. %s\n",i+1,pacientesSistema[i].nome);
         }
-        printf("Escolha: ");
+        printf("\nEscolha: ");
         scanf("%d",&indiceExcluir);
         if (indiceExcluir>=1 && indiceExcluir<=totalPacientes) {
             break;
@@ -1635,22 +1676,29 @@ void excluirPaciente() {
     free(jsonAtualizado);
     cJSON_Delete(root);
 
-    printf("\nPaciente '%s' excluído com sucesso!\n\n", pacienteExcluir);
+    printf("\n---------------------------------------");
+    printf("\nPaciente '%s' excluído com sucesso!\n", pacienteExcluir);
+    printf("---------------------------------------\n\n");
     system("pause");
+
+    excluirPaciente();
 }
 
 void verPacientes() {
+    system("cls");
 
     if (totalPacientes == 0) {
-    printf("\nNão há pacientes cadastrados.\n\n");
-    system("pause");
-    return;
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM PACIENTE <---\n");
+        printf("\nNão há pacientes cadastrados.\n\n");
+        system("pause");
+        return;
     }
 
     int escolhaPaciente;
     while(1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER DADOS DE UM PACIENTE <---\n");
         printf("Escolha um paciente para ver suas informações [0 para voltar]: \n\n");
         for (int i=0;i<totalPacientes;i++) {
@@ -1673,7 +1721,7 @@ void verPacientes() {
     escolhaPaciente -= 1;
 
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> VER DADOS DE UM PACIENTE <---\n");
     printf(" - Dados do paciente %s:\n", pacientesSistema[escolhaPaciente].nome);
     printf("Idade        : %d\n",pacientesSistema[escolhaPaciente].idade);
@@ -1687,6 +1735,8 @@ void verPacientes() {
     }
 
     system("pause");
+
+    verPacientes();
 }
 
 //--------------------------- Gerenciar Leitos ---------------------------
@@ -1695,6 +1745,7 @@ void gerenciarLeitos() {
     int opcao;
     while (1) {
         system("cls");
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> GERENCIAR LEITOS <---\n");
         printf("Opções [0 para voltar]:\n\n");
         printf(" 1- Criar Leito\n");
@@ -1723,7 +1774,7 @@ void gerenciarLeitos() {
     
 void criarLeito() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> CRIAR LEITO <---\n");
 
     FILE *file = fopen("informacoes.json","r");
@@ -1796,15 +1847,30 @@ void criarLeito() {
     cJSON_Delete(root);
 }
 
-// falta fazer que só pode ser excluódo se não tiver ninguém no leito
 void excluirLeito() {
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
-    printf(" ---> EXCLUIR LEITO <---\n");
 
     // Verifica se há leitos cadastrados
     if (totalLeitos == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> EXCLUIR LEITO <---\n");
         printf("\nNão há leitos cadastrados.\n\n");
+        system("pause");
+        return;
+    }
+
+    char totalLeitosDisponiveis[100][50];
+    int numeroLeitosDisponiveis = 0;
+    for (int i=0;i<totalLeitos;i++) {
+        if (strcmp(leitosSistema[i].paciente,"vazio") == 0) {
+            strcpy(totalLeitosDisponiveis[numeroLeitosDisponiveis], leitosSistema[i].nome);
+            numeroLeitosDisponiveis++;
+        }
+    }
+    if (numeroLeitosDisponiveis == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> EXCLUIR LEITO <---\n");
+        printf("\nTodos os leitos estão ocupados!\n\n");
         system("pause");
         return;
     }
@@ -1813,15 +1879,15 @@ void excluirLeito() {
     int indiceExcluir;
     while (1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> EXCLUIR LEITO <---\n");
         printf("Qual leito deseja excluir [0 para voltar]?\n\n");
-        for (int i=0;i<totalLeitos;i++) {
-            printf("%d. %s\n",i+1,leitosSistema[i].nome);
+        for (int i=0;i<numeroLeitosDisponiveis;i++) {
+            printf("%d. %s\n",i+1,totalLeitosDisponiveis[i]);
         }
-        printf("Escolha: ");
+        printf("\nEscolha: ");
         scanf("%d",&indiceExcluir);
-        if (indiceExcluir>=1 && indiceExcluir<=totalLeitos) {
+        if (indiceExcluir>=1 && indiceExcluir<=numeroLeitosDisponiveis) {
             break;
         }
         if (indiceExcluir == 0) {
@@ -1831,9 +1897,16 @@ void excluirLeito() {
         system("pause");
         system("cls");
     }
+
     indiceExcluir -= 1;
     char leitoExcluir[50];
-    strcpy(leitoExcluir,leitosSistema[indiceExcluir].nome);
+    strcpy(leitoExcluir,totalLeitosDisponiveis[indiceExcluir]);
+
+    for (int i=0;i<totalLeitos;i++) {
+        if (strcmp(leitoExcluir,leitosSistema[i].nome) == 0) {
+            indiceExcluir = i;
+        }
+    }
 
     // Remove o leito da struct leitosSistema
     for (int i=indiceExcluir;i<totalLeitos-1;i++) {
@@ -1890,19 +1963,24 @@ void excluirLeito() {
 
     printf("\nLeito \"%s\" excluído com sucesso!\n\n", leitoExcluir);
     system("pause");
+
+    excluirLeito();
 }
 
 void verLeitos() {
+    system("cls");
     if (totalLeitos == 0) {
-    printf("\nNão há leitos cadastrados.\n\n");
-    system("pause");
-    return;
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> VER SITUAÇÃO DO LEITO <---\n");
+        printf("\nNão há leitos cadastrados.\n\n");
+        system("pause");
+        return;
     }
 
     int escolhaLeito;
     while(1) {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> VER SITUAÇÃO DO LEITO <---\n");
         printf("Escolha um leito para ver suas situação [0 para voltar]: \n\n");
         for (int i=0;i<totalLeitos;i++) {
@@ -1925,33 +2003,36 @@ void verLeitos() {
     escolhaLeito -= 1;
 
     system("cls");
-    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> VER SITUAÇÃO DO LEITO <---\n\n");
     printf(" - Leito \"%s\": ", leitosSistema[escolhaLeito].nome);
     if (strcmp(leitosSistema[escolhaLeito].paciente, "vazio") == 0) {
-        printf("Vazio\n\n");
+        printf("vazio\n\n");
     } else {
         printf("Ocupado por: %s\n\n",leitosSistema[escolhaLeito].paciente);
     }
 
     system("pause");
+
+    verLeitos();
 }
 
 void gerenciarPacientesNosLeitos() {
     int opcao;
     while(1) {
         system("cls");
-        printf(" [--------- GERENCIAR PACIENTES NOS LEITOS ---------]\n\n");
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> GERENCIAR PACIENTES NOS LEITOS <---\n");
         printf("O que deseja fazer [0 para voltar]?\n\n");
         printf(" 1- Alocar Paciente ao Leito\n");
-        printf(" 2- Tirar Paciente do leito\n");
+        printf(" 2- Desalocar Paciente do leito\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
 
         if (opcao==1) {
             alocarPacienteAoLeito();
         } else if (opcao==2) {
-            tirarPacienteDoLeito();
+            desalocarPacienteDoLeito();
         } else if (opcao==0) {
             break;
         } else {
@@ -1968,12 +2049,18 @@ void alocarPacienteAoLeito() {
     // Verifica se há leitos ou pacientes
     if (totalLeitos == 0 || totalPacientes == 0) {
         if (totalLeitos == 0 && totalPacientes != 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
             printf("\nNão há leitos cadastrados!\n\n");
             system("pause");
         } else if (totalLeitos != 0 && totalPacientes == 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
             printf("\nNão há pacientes cadastrados!\n\n");
             system("pause");
         } else {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
             printf("\nNão há nem leitos nem pacientes cadastrados!\n\n");
             system("pause");
         }
@@ -1981,101 +2068,105 @@ void alocarPacienteAoLeito() {
     }
 
     // Verifica se existe algum leito disponível
-    bool leitoDisponivel = false;
+    char totalLeitosDisponiveis[100][50];
+    int numeroLeitosDisponiveis = 0;
     for (int i = 0; i < totalLeitos; i++) {
         if (strcmp(leitosSistema[i].paciente, "vazio") == 0) {
-            leitoDisponivel = true;
-            break;
+            strcpy(totalLeitosDisponiveis[numeroLeitosDisponiveis],leitosSistema[i].nome);
+            numeroLeitosDisponiveis++;
         }
     }
-    if (!leitoDisponivel) {
+    if (numeroLeitosDisponiveis == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
         printf("\nTodos os leitos estão alocados!\n\n");
         system("pause");
         return;
     }
 
     // Verifica se existe algum paciente não alocado
-    bool pacienteNaoAlocado = false;
+    char totalPacientesDisponiveis[100][50];
+    int numeroPacientesDisponiveis = 0;
     for (int i = 0; i < totalPacientes; i++) {
         if (!pacientesSistema[i].alocadoLeito) {
-            pacienteNaoAlocado = true;
-            break;
+            strcpy(totalPacientesDisponiveis[numeroPacientesDisponiveis], pacientesSistema[i].nome);
+            numeroPacientesDisponiveis++;
         }
     }
-    if (!pacienteNaoAlocado) {
+    if (numeroPacientesDisponiveis == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
         printf("\nTodos os pacientes estão alocados!\n\n");
         system("pause");
         return;
     }
 
-    // Escolha do leito
-    int escolhaLeito;
-    char totalLeitosDisponiveis[totalLeitos][50];
-    while (1) {
-        int contador = 0;
-        printf("\nEscolha um leito [0 para voltar]:\n");
-        for (int i = 0; i < totalLeitos; i++) {
-            if (strcmp(leitosSistema[i].paciente, "vazio") == 0) {
-                printf("%d. %s\n", contador + 1, leitosSistema[i].nome);
-                strcpy(totalLeitosDisponiveis[contador], leitosSistema[i].nome);
-                contador++;
-            }
+    int indicePacienteEscolhido;
+    while(1) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
+        printf("Escolha um paciente [0 para voltar]:\n\n");
+        for (int i=0;i<numeroPacientesDisponiveis;i++) {
+            printf("%d. %s\n", i+1, totalPacientesDisponiveis[i]);
         }
         printf("\nEscolha: ");
-        scanf("%d", &escolhaLeito);
+        scanf("%d",&indicePacienteEscolhido);
 
-        if (escolhaLeito == 0) return;
-        if (escolhaLeito >= 1 && escolhaLeito <= contador) break;
+        if(indicePacienteEscolhido>=1 && indicePacienteEscolhido<=numeroPacientesDisponiveis) {
+            system("cls");
+            break;
+        }
+        if (indicePacienteEscolhido == 0) {
+            return;
+        }
 
         printf("\nOpção inválida!\n\n");
         system("pause");
     }
-    escolhaLeito -= 1; // ajusta índice
 
-    // Escolha do paciente
-    int escolhaPaciente;
-    char totalPacientesDisponiveis[totalPacientes][50];
-    while (1) {
-        int contador = 0;
-        printf("\nEscolha um paciente para alocar no leito %s [0 para voltar]:\n", totalLeitosDisponiveis[escolhaLeito]);
-        for (int i = 0; i < totalPacientes; i++) {
-            if (!pacientesSistema[i].alocadoLeito) {
-                printf("%d. %s\n", contador + 1, pacientesSistema[i].nome);
-                strcpy(totalPacientesDisponiveis[contador], pacientesSistema[i].nome);
-                contador++;
-            }
+    indicePacienteEscolhido -= 1;
+
+    int indiceLeitoEscolhido;
+    while(1) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> ALOCAR PACIENTE NO LEITO <---\n");
+        printf("Escolha um leito para alocar o paciente [0 para voltar]:\n\n");
+        for (int i=0;i<numeroLeitosDisponiveis;i++) {
+            printf("%d. %s\n", i+1, totalLeitosDisponiveis[i]);
         }
         printf("\nEscolha: ");
-        scanf("%d", &escolhaPaciente);
+        scanf("%d",&indiceLeitoEscolhido);
 
-        if (escolhaPaciente == 0) return;
-        if (escolhaPaciente >= 1 && escolhaPaciente <= contador) break;
+        if(indiceLeitoEscolhido>=1 && indiceLeitoEscolhido<=numeroLeitosDisponiveis) {
+            break;
+        }
+        if (indiceLeitoEscolhido == 0) {
+            return;
+        }
 
         printf("\nOpção inválida!\n\n");
         system("pause");
     }
-    escolhaPaciente -= 1; // ajusta índice
 
-    // Aloca paciente ao leito na memória
-    for (int i = 0; i < totalLeitos; i++) {
-        if (strcmp(leitosSistema[i].nome, totalLeitosDisponiveis[escolhaLeito]) == 0) {
-            strcpy(leitosSistema[i].paciente, totalPacientesDisponiveis[escolhaPaciente]);
+    indiceLeitoEscolhido -= 1;
+
+    for (int i=0;i<totalPacientes;i++) {
+        if (strcmp(pacientesSistema[i].nome, totalPacientesDisponiveis[indicePacienteEscolhido]) == 0) {
+            indicePacienteEscolhido = i;
             break;
         }
     }
 
-    // Marca paciente como alocado na memória
-    for (int i = 0; i < totalPacientes; i++) {
-        if (strcmp(pacientesSistema[i].nome, totalPacientesDisponiveis[escolhaPaciente]) == 0) {
-            pacientesSistema[i].alocadoLeito = true;
+    for (int i=0;i<totalLeitos;i++) {
+        if (strcmp(leitosSistema[i].nome, totalLeitosDisponiveis[indiceLeitoEscolhido]) == 0) {
+            indiceLeitoEscolhido = i;
             break;
         }
     }
 
-    printf("\nPaciente '%s' alocado ao leito '%s' com sucesso!\n\n",
-           totalPacientesDisponiveis[escolhaPaciente],
-           totalLeitosDisponiveis[escolhaLeito]);
-    system("pause");
+    strcpy(leitosSistema[indiceLeitoEscolhido].paciente, pacientesSistema[indicePacienteEscolhido].nome);
+    pacientesSistema[indicePacienteEscolhido].alocadoLeito = true;
+
 
     // Atualiza o JSON
     FILE *file = fopen("informacoes.json", "r");
@@ -2109,13 +2200,10 @@ void alocarPacienteAoLeito() {
         for (int i = 0; i < tamanhoLeitos; i++) {
             cJSON *leitoItem = cJSON_GetArrayItem(leitosArray, i);
             cJSON *nomeLeito = cJSON_GetObjectItem(leitoItem, "nome");
-            if (cJSON_IsString(nomeLeito) && strcmp(nomeLeito->valuestring, totalLeitosDisponiveis[escolhaLeito]) == 0) {
-                cJSON *pacienteItem = cJSON_GetObjectItem(leitoItem, "paciente");
-                if (pacienteItem) {
-                    cJSON_ReplaceItemInObject(leitoItem, "paciente", cJSON_CreateString(totalPacientesDisponiveis[escolhaPaciente]));
-                } else {
-                    cJSON_AddStringToObject(leitoItem, "paciente", totalPacientesDisponiveis[escolhaPaciente]);
-                }
+
+            if (cJSON_IsString(nomeLeito) && strcmp(nomeLeito->valuestring, leitosSistema[indiceLeitoEscolhido].nome) == 0) {
+                cJSON_ReplaceItemInObject(leitoItem, "paciente",
+                                        cJSON_CreateString(pacientesSistema[indicePacienteEscolhido].nome));
                 break;
             }
         }
@@ -2128,15 +2216,15 @@ void alocarPacienteAoLeito() {
         for (int i = 0; i < tamanhoPacientes; i++) {
             cJSON *pacienteItem = cJSON_GetArrayItem(pacientesArray, i);
             cJSON *nome = cJSON_GetObjectItem(pacienteItem, "nome");
-            if (cJSON_IsString(nome) && strcmp(nome->valuestring, totalPacientesDisponiveis[escolhaPaciente]) == 0) {
-                // Substitui ou cria o booleano
+
+            if (cJSON_IsString(nome) && strcmp(nome->valuestring, pacientesSistema[indicePacienteEscolhido].nome) == 0) {
                 cJSON_ReplaceItemInObject(pacienteItem, "alocadoLeito", cJSON_CreateBool(true));
                 break;
             }
         }
     }
 
-    // Salva o JSON atualizado
+    // Salva JSON atualizado
     file = fopen("informacoes.json", "w");
     if (file) {
         char *jsonAtualizado = cJSON_Print(root);
@@ -2146,9 +2234,147 @@ void alocarPacienteAoLeito() {
     }
 
     cJSON_Delete(root);
+
+    printf("\nPaciente %s foi alocado no Leito %s",pacientesSistema[indicePacienteEscolhido].nome,leitosSistema[indiceLeitoEscolhido].nome);
+    system("pause");
+
+    alocarPacienteAoLeito();
+
 }
 
-void tirarPacienteDoLeito() {
+void desalocarPacienteDoLeito() {
+    system("cls");
+
+    // Verifica se há leitos ou pacientes
+    if (totalLeitos == 0 || totalPacientes == 0) {
+        if (totalLeitos == 0 && totalPacientes != 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
+            printf("\nNão há leitos cadastrados!\n\n");
+            system("pause");
+        } else if (totalLeitos != 0 && totalPacientes == 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
+            printf("\nNão há pacientes cadastrados!\n\n");
+            system("pause");
+        } else {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
+            printf("\nNão há nem leitos nem pacientes cadastrados!\n\n");
+            system("pause");
+        }
+        return;
+    }
+
+    char totalPacientesAlocados[100][50];
+    int numeroPacientesAlocados = 0;
+    for (int i = 0; i < totalPacientes; i++) {
+        if (pacientesSistema[i].alocadoLeito == true) {
+            strcpy(totalPacientesAlocados[numeroPacientesAlocados], pacientesSistema[i].nome);
+            numeroPacientesAlocados++;
+        }
+    }
+    if (numeroPacientesAlocados == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
+        printf("\nNão há pacientes alocados ainda!\n\n");
+        system("pause");
+        return;
+    }
+
+    int indicePacienteEscolhido;
+    while (1) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
+        printf("Escolha um paciente [0 para voltar]:\n\n");
+        for (int i = 0; i < numeroPacientesAlocados; i++) {
+            printf("%d. %s\n", i + 1, totalPacientesAlocados[i]);
+        }
+        printf("\nEscolha: ");
+        scanf("%d", &indicePacienteEscolhido);
+
+        if (indicePacienteEscolhido >= 1 && indicePacienteEscolhido <= numeroPacientesAlocados) {
+            system("cls");
+            break;
+        }
+        if (indicePacienteEscolhido == 0) {
+            return;
+        }
+    }
+    indicePacienteEscolhido -= 1;
+
+    for (int i = 0; i < totalPacientes; i++) {
+        if (strcmp(totalPacientesAlocados[indicePacienteEscolhido], pacientesSistema[i].nome) == 0) {
+            indicePacienteEscolhido = i;
+            break;
+        }
+    }
+
+    int indiceLeitoPaciente;
+    for (int i = 0; i < totalLeitos; i++) {
+        if (strcmp(totalPacientesAlocados[indicePacienteEscolhido], leitosSistema[i].paciente) == 0) {
+            indiceLeitoPaciente = i;
+            break;
+        }
+    }
+
+    // Atualiza na memória
+    strcpy(leitosSistema[indiceLeitoPaciente].paciente, "vazio");
+    pacientesSistema[indicePacienteEscolhido].alocadoLeito = false;
+
+    // Atualiza no JSON
+    FILE *file = fopen("informacoes.json", "r");
+    if (!file) {
+        printf("ERRO ao abrir o arquivo JSON.\n");
+        system("pause");
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char *buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, file);
+    buffer[tamanho] = '\0';
+    fclose(file);
+
+    cJSON *root = cJSON_Parse(buffer);
+    free(buffer);
+    if (!root) {
+        printf("Erro ao interpretar o arquivo JSON.\n");
+        system("pause");
+        return;
+    }
+
+    // Entra no array
+    cJSON *leitosArray = cJSON_GetObjectItem(root, "leitos");
+    cJSON *leito = cJSON_GetArrayItem(leitosArray, indiceLeitoPaciente);
+    cJSON *pacienteLeito = cJSON_GetObjectItem(leito, "paciente");
+    cJSON_SetValuestring(pacienteLeito, "vazio");
+    
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+    cJSON *pacienteObj = cJSON_GetArrayItem(pacientesArray, indicePacienteEscolhido);
+    cJSON *alocadoLeito = cJSON_GetObjectItem(pacienteObj, "alocadoLeito");
+    cJSON_SetBoolValue(alocadoLeito,false);
+
+    // Reabre o arquivo para salvar
+    file = fopen("informacoes.json", "w");
+    if (file == NULL) {
+        printf("Erro ao salvar o arquivo!\n");
+        cJSON_Delete(root);
+        return;
+    }
+
+    char *novoJson = cJSON_Print(root);
+    fputs(novoJson, file);
+    fclose(file);
+
+    free(novoJson);
+    cJSON_Delete(root);
+
+    printf("\nPaciente desalocado com sucesso!\n\n");
+    system("pause");
 
 }
 
@@ -2165,7 +2391,7 @@ void menuADM() {
     
     do {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU ADMINISTRADOR <---\n\n");
         printf(" 1- Gerenciar Usuários\n");
         printf(" 2- Gerenciar Pacientes\n");
@@ -2201,7 +2427,7 @@ void menuMEDICO() {
 
     do {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU MÉDICO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
         printf(" 2- Dar Alta\n");
@@ -2234,7 +2460,7 @@ void menuENFERMEIRO() {
 
     do {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU ENFERMEIRO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
         printf(" 2- Gerenciar pacientes nos Leitos\n");
@@ -2267,7 +2493,7 @@ void menuRECEPCIONISTA() {
 
     do {
         system("cls");
-        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU RECEPÇÃO <---\n");
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
