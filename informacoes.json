@@ -52,16 +52,25 @@
 			"idade":	25
 		}],
 	"pacientes":	[{
+			"nome":	"Mattia Poletto",
+			"idade":	23,
+			"sexo":	"m",
+			"prioridade":	3,
+			"diagnostico":	"Tá ficando muito forte!",
+			"alocadoLeito":	false
+		}, {
 			"nome":	"Kaique",
 			"idade":	19,
 			"sexo":	"m",
 			"prioridade":	3,
-			"diagnostico":	"O peito tá crescendo acima do normal."
+			"diagnostico":	"Tá ficando doidão!",
+			"alocadoLeito":	false
 		}, {
-			"nome":	"Mattia Poletto",
-			"idade":	23,
-			"sexo":	"m",
+			"nome":	"Natalia Poletto",
+			"idade":	26,
+			"sexo":	"f",
 			"prioridade":	1,
-			"diagnostico":	"Tá ficando fortão"
+			"diagnostico":	"Tá cheirando muito!",
+			"alocadoLeito":	false
 		}]
 }

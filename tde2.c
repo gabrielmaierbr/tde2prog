@@ -43,7 +43,13 @@ typedef struct {
     char sexo[1];
     int prioridade;
     char diagnostico[100];
+    bool alocadoLeito;
 } Paciente;
+
+typedef struct {
+    char nome[50];
+    Paciente paciente;
+} Leito;
 
 // Declaração das Funções
 void credenciais();
@@ -386,13 +392,15 @@ void jsonParaStructs() {
             cJSON *sexo = cJSON_GetObjectItem(pacientesItem, "sexo");
             cJSON *prioridade = cJSON_GetObjectItem(pacientesItem, "prioridade");
             cJSON *diagnostico = cJSON_GetObjectItem(pacientesItem, "diagnostico");
+            cJSON *alocadoLeito = cJSON_GetObjectItem(pacientesItem, "alocadoLeito");
             
-            if (cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(sexo) && cJSON_IsNumber(prioridade) && cJSON_IsString(diagnostico)) {
+            if (cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(sexo) && cJSON_IsNumber(prioridade) && cJSON_IsString(diagnostico) && cJSON_IsBool(alocadoLeito)) {
                 strcpy(pacientesSistema[totalPacientes].nome, nome->valuestring);
                 pacientesSistema[totalPacientes].idade = idade->valueint;
                 strcpy(pacientesSistema[totalPacientes].sexo, sexo->valuestring);
                 pacientesSistema[totalPacientes].prioridade = prioridade->valueint;
                 strcpy(pacientesSistema[totalPacientes].diagnostico, diagnostico->valuestring);
+                pacientesSistema[totalPacientes].alocadoLeito = cJSON_IsTrue(alocadoLeito);
                 totalPacientes++;
             }
         }
@@ -1276,6 +1284,13 @@ void excluirRecepcionista() {
 }
 
 void verUsuarios() {
+
+    if (totalUsuarios == 0) {
+    printf("\nNão há usuários cadastrados.\n\n");
+    system("pause");
+    return;
+    }
+
     int escolhaLogin;
     while(1) {
         system("cls");
@@ -1472,6 +1487,7 @@ void cadastrarPaciente() {
         cJSON_AddStringToObject(novoPaciente, "sexo", pacientesSistema[totalPacientes].sexo);
         cJSON_AddNumberToObject(novoPaciente, "prioridade", pacientesSistema[totalPacientes].prioridade);
         cJSON_AddStringToObject(novoPaciente, "diagnostico", pacientesSistema[totalPacientes].diagnostico);
+        cJSON_AddBoolToObject(novoPaciente, "alocadoLeito", false);
 
         // Adicionando o objeto ao JSON
         cJSON_AddItemToArray(pacientesArray, novoPaciente);
@@ -1596,7 +1612,7 @@ void verPacientes() {
     system("pause");
     return;
     }
-    
+
     int escolhaPaciente;
     while(1) {
         system("cls");
@@ -1629,7 +1645,12 @@ void verPacientes() {
     printf("Idade        : %d\n",pacientesSistema[escolhaPaciente].idade);
     printf("Sexo         : %s\n",pacientesSistema[escolhaPaciente].sexo);
     printf("Prioridade   : %d\n",pacientesSistema[escolhaPaciente].prioridade);
-    printf("Diagnóstico  : %s\n\n",pacientesSistema[escolhaPaciente].diagnostico);
+    printf("Diagnóstico  : %s\n",pacientesSistema[escolhaPaciente].diagnostico);
+    if (pacientesSistema[escolhaPaciente].alocadoLeito == false) {
+        printf("Este paciente não está alocado em nenhum leito\n\n");
+    } else {
+        printf("Este paciente está alocado em um leito\n\n");
+    }
 
     system("pause");
 }
