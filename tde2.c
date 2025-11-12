@@ -1746,12 +1746,12 @@ void gerenciarLeitos() {
     while (1) {
         system("cls");
         printf(" [---------------- %s ----------------]\n\n", titulo);
-        printf(" ---> GERENCIAR LEITOS <---\n");
-        printf("Opções [0 para voltar]:\n\n");
+        printf(" ---> GERENCIAR LEITOS <---\n\n");
         printf(" 1- Criar Leito\n");
         printf(" 2- Excluir Leito\n");
         printf(" 3- Ver situação dos Leitos\n");
         printf(" 4- Gerenciar Pecientes nos Leitos\n");
+        printf(" 0- Voltar\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
 
@@ -2022,10 +2022,10 @@ void gerenciarPacientesNosLeitos() {
     while(1) {
         system("cls");
         printf(" [---------------- %s ----------------]\n\n", titulo);
-        printf(" ---> GERENCIAR PACIENTES NOS LEITOS <---\n");
-        printf("O que deseja fazer [0 para voltar]?\n\n");
+        printf(" ---> GERENCIAR PACIENTES NOS LEITOS <---\n\n");
         printf(" 1- Alocar Paciente ao Leito\n");
         printf(" 2- Desalocar Paciente do leito\n");
+        printf(" 0- Voltar\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
 
@@ -2235,7 +2235,7 @@ void alocarPacienteAoLeito() {
 
     cJSON_Delete(root);
 
-    printf("\nPaciente %s foi alocado no Leito %s",pacientesSistema[indicePacienteEscolhido].nome,leitosSistema[indiceLeitoEscolhido].nome);
+    printf("\nPaciente %s foi alocado no Leito %s\n\n",pacientesSistema[indicePacienteEscolhido].nome,leitosSistema[indiceLeitoEscolhido].nome);
     system("pause");
 
     alocarPacienteAoLeito();
@@ -2322,7 +2322,7 @@ void desalocarPacienteDoLeito() {
     strcpy(leitosSistema[indiceLeitoPaciente].paciente, "vazio");
     pacientesSistema[indicePacienteEscolhido].alocadoLeito = false;
 
-    // Atualiza no JSON
+    // --- Atualiza no JSON ---
     FILE *file = fopen("informacoes.json", "r");
     if (!file) {
         printf("ERRO ao abrir o arquivo JSON.\n");
@@ -2347,32 +2347,54 @@ void desalocarPacienteDoLeito() {
         return;
     }
 
-    // Entra no array
+    // ---------- Atualiza o campo do leito ----------
     cJSON *leitosArray = cJSON_GetObjectItem(root, "leitos");
-    cJSON *leito = cJSON_GetArrayItem(leitosArray, indiceLeitoPaciente);
-    cJSON *pacienteLeito = cJSON_GetObjectItem(leito, "paciente");
-    cJSON_SetValuestring(pacienteLeito, "vazio");
-    
-    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
-    cJSON *pacienteObj = cJSON_GetArrayItem(pacientesArray, indicePacienteEscolhido);
-    cJSON *alocadoLeito = cJSON_GetObjectItem(pacienteObj, "alocadoLeito");
-    cJSON_SetBoolValue(alocadoLeito,false);
+    if (leitosArray && cJSON_IsArray(leitosArray)) {
+        cJSON *leito = cJSON_GetArrayItem(leitosArray, indiceLeitoPaciente);
+        if (leito) {
+            cJSON *pacienteLeito = cJSON_GetObjectItem(leito, "paciente");
+            if (pacienteLeito) {
+                cJSON_SetValuestring(pacienteLeito, "vazio");
+            } else {
+                // se não existir o campo, adiciona
+                cJSON_AddStringToObject(leito, "paciente", "vazio");
+            }
+        }
+    }
 
-    // Reabre o arquivo para salvar
+    // ---------- Atualiza o campo do paciente ----------
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+    if (pacientesArray && cJSON_IsArray(pacientesArray)) {
+        cJSON *paciente = cJSON_GetArrayItem(pacientesArray, indicePacienteEscolhido);
+        if (paciente) {
+            cJSON *alocado = cJSON_GetObjectItem(paciente, "alocadoLeito");
+            if (alocado) {
+                cJSON_SetBoolValue(alocado, false);
+            } else {
+                // se não existir, adiciona
+                cJSON_AddBoolToObject(paciente, "alocadoLeito", false);
+            }
+        }
+    }
+
+    // ---------- Salva de volta ----------
     file = fopen("informacoes.json", "w");
-    if (file == NULL) {
+    if (!file) {
         printf("Erro ao salvar o arquivo!\n");
         cJSON_Delete(root);
         return;
     }
 
     char *novoJson = cJSON_Print(root);
-    fputs(novoJson, file);
+    fprintf(file, "%s", novoJson);
     fclose(file);
 
     free(novoJson);
     cJSON_Delete(root);
 
+
+    printf(" [---------------- %s ----------------]\n\n", titulo);
+    printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
     printf("\nPaciente desalocado com sucesso!\n\n");
     system("pause");
 
@@ -2430,7 +2452,8 @@ void menuMEDICO() {
         printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU MÉDICO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
-        printf(" 2- Dar Alta\n");
+        printf(" 2- Ver Leitos\n");
+        printf(" 3- Dar Alta\n");
         printf(" 0- Sair\n");
         printf("\n Digite a opção: ");
         scanf("%d", &opcao);
@@ -2445,6 +2468,9 @@ void menuMEDICO() {
                 verPacientes();
                 break;
             case 2:
+                verLeitos();
+                break;
+            case 3:
                 darAlta();
                 break;
             default:
