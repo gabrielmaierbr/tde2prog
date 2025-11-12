@@ -602,8 +602,8 @@ void cadastrarRecepcionista() {
         }
 
         // Pega o array "medicos" do objeto JSON principal
-        enfermeiro_array = cJSON_GetObjectItemCaseSensitive(root_json, "recepcionistas");
-        if (!cJSON_IsArray(enfermeiro_array)) {
+        recepcionista_array = cJSON_GetObjectItemCaseSensitive(root_json, "recepcionistas");
+        if (!cJSON_IsArray(recepcionista_array)) {
             fprintf(stderr, "Erro: A chave 'recepcionistas' não é um array no JSON.\n");
             cJSON_Delete(root_json);
             return;
