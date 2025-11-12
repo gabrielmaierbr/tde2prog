@@ -18,11 +18,32 @@ typedef struct {
 } Paciente;
 
 typedef struct {
+    char nome[50];
+    int idade;
+    char especialidade[30];
+    char crm[15];
+    char login[20];
+} Medico;
+
+typedef struct {
+    char nome[50];
+    int idade;
+    char coren[15];
+    char login[20];
+} Enfermeiro;
+
+typedef struct {
+    char nome[50];
+    int idade;
+    char cpf[15];
+    char login[20];
+} Recepcionista;
+
+typedef struct {
     char login[20];
     char senha[30];
     char tipo[20];
 } Usuario;
-Usuario usuarios;
 
 //Declaração das Funções
 void credenciais();
@@ -38,8 +59,10 @@ void gerenciarLeitos(), criarLeito(), excluirLeito();
 void gerenciarPacientesNosLeitos(), alocarPacienteAoLeito(), tirarPacienteDoLeito();
 void darAlta();
 cJSON* lerArquivoJson(const char* nomeArquivo);
-bool cadastrarLogineSenha(Usuario usuarios, char tipo[20]);
+bool cadastrarLogineSenha(const char* login, const char* senha, const char* tipo);
 bool usuarioExiste(const char* login);
+bool cadastrarPacienteJSON(Paciente novoPaciente);
+void listarPacientes();
 
 
 //Variáveis globais
@@ -313,7 +336,8 @@ void cadastrarUsuario() {
 }
 
 void cadastrarMedico() {
-    char nomeMedico[30], especialidade[20], crm[15], *buffer = NULL, loginMedico[20], senhaMedico[20];
+    char nomeMedico[30], especialidade[20], crm[15], *buffer = NULL;
+    char loginMedico[20], senhaMedico[30];
     int idadeMedico, totalMedicos;
 
     system("cls");
@@ -372,19 +396,19 @@ void cadastrarMedico() {
     for (int i = 0; i < totalMedicos; i++) {
         printf("\n--- Cadastrando Médico(a) %d de %d ---\n", i + 1, totalMedicos);
         printf("Insira o Nome do Médico(a): ");
-        scanf(" %[^\n]", nomeMedico);
+        scanf(" %49[^\n]", nomeMedico);
         printf("Insira a Idade do Médico(a): ");
         scanf("%d", &idadeMedico);
         printf("Insira a Especialidade do Médico(a): ");
-        scanf(" %s", especialidade);
+        scanf(" %29[^\n]", especialidade);
         printf("Insira o CRM do Médico(a): ");
-        scanf(" %s", crm);
+        scanf(" %14s", crm);
         printf("Insira o Login do Usuário do Médico(a): ");
-        scanf(" %s", usuarios.login);
+        scanf(" %19s", loginMedico);
         printf("Insira a Senha do Usuário do Médico(a): ");
-        scanf(" %s", usuarios.senha);
+        scanf(" %29s", senhaMedico);
 
-        if (!cadastrarLogineSenha(usuarios, "medico")) {
+        if (!cadastrarLogineSenha(loginMedico, senhaMedico, "medico")) {
             printf("\nCadastro de médico cancelado, Usuario duplicado.\n");
             system("pause");
             return;
@@ -436,7 +460,8 @@ void cadastrarMedico() {
 }
 
 void cadastrarEnfermeiro() {
-char nomeEnfermeiro[30], coren[15];
+    char nomeEnfermeiro[30], coren[15];
+    char loginEnfermeiro[20], senhaEnfermeiro[30];
     int idadeEnfermeiro, totalEnfermeiros;
 
     system("cls");
@@ -496,33 +521,34 @@ char nomeEnfermeiro[30], coren[15];
     for (int i = 0; i < totalEnfermeiros; i++) {
         printf("\n--- Cadastrando Enfermeiro(a) %d de %d ---\n", i + 1, totalEnfermeiros);
         printf("Insira o Nome do Enfermeiro(a): ");
-        scanf(" %[^\n]", nomeEnfermeiro);
+        scanf(" %49[^\n]", nomeEnfermeiro);
         printf("Insira a Idade do Enfermeiro(a): ");
-        scanf("%d", idadeEnfermeiro);
+        scanf("%d", &idadeEnfermeiro);
         printf("Insira o COREN do Enfermeiro: ");
-        scanf(" %s", coren);
+        scanf(" %14s", coren);
         printf("Insira o Login do Usuário do Enfermeiro(a): ");
-        scanf(" %s", usuarios.login);
+        scanf(" %19s", loginEnfermeiro);
         printf("Insira a Senha do Usuário do Enfermeiro(a): ");
-        scanf(" %s", usuarios.senha);
-        if (!cadastrarLogineSenha(usuarios, "enfermeiro")){
+        scanf(" %29s", senhaEnfermeiro);
+        
+        if (!cadastrarLogineSenha(loginEnfermeiro, senhaEnfermeiro, "enfermeiro")){
             printf("\nCadastro de enfermeiro cancelado, Usuario duplicado.\n");
             system("pause");
             return;
         } else {
              // Cria um novo objeto JSON para o enfermeiro
-        cJSON *enfermeiro_obj = cJSON_CreateObject();
-        cJSON_AddStringToObject(enfermeiro_obj, "nome", nomeEnfermeiro);
-        cJSON_AddNumberToObject(enfermeiro_obj, "idade", idadeEnfermeiro);
-        cJSON_AddStringToObject(enfermeiro_obj, "coren", coren);
+            cJSON *enfermeiro_obj = cJSON_CreateObject();
+            cJSON_AddStringToObject(enfermeiro_obj, "nome", nomeEnfermeiro);
+            cJSON_AddNumberToObject(enfermeiro_obj, "idade", idadeEnfermeiro);
+            cJSON_AddStringToObject(enfermeiro_obj, "coren", coren);
 
-        // Adiciona o objeto do novo enfermeiro ao array de enfermeiro
-        cJSON_AddItemToArray(enfermeiro_array, enfermeiro_obj);
+            // Adiciona o objeto do novo enfermeiro ao array de enfermeiro
+            cJSON_AddItemToArray(enfermeiro_array, enfermeiro_obj);
 
-        printf("\nEnfermeiro %s cadastrado com sucesso!\n", nomeEnfermeiro);
-        system("pause");
-        system("cls");
-        printf(" [-------------- CADASTRAR ENFERMEIRO(A) --------------]\n\n");
+            printf("\nEnfermeiro %s cadastrado com sucesso!\n", nomeEnfermeiro);
+            system("pause");
+            system("cls");
+            printf(" [-------------- CADASTRAR ENFERMEIRO(A) --------------]\n\n");
         }
     }
 
@@ -556,14 +582,15 @@ char nomeEnfermeiro[30], coren[15];
 }
 
 void cadastrarRecepcionista() {
-    char nomeRecepcionista[30], cpf_recepcionista[10];
+    char nomeRecepcionista[50], cpf_recepcionista[15];  // Aumentado tamanho
+    char loginRecepcionista[20], senhaRecepcionista[30];
     int idadeRecepcionista, totalRecepcionistas;
 
     system("cls");
     printf(" [-------------- CADASTRAR RECEPCIONISTA(A) --------------]\n\n");
 
     // Tenta abrir o arquivo para leitura para ver se ele já existe
-    FILE *file = fopen("recepcionistas.json", "rb"); // "rb" para ler em modo binário
+    FILE *file = fopen("recepcionistas.json", "rb");
     char *buffer = NULL;
     cJSON *root_json = NULL;
     cJSON *recepcionista_array = NULL;
@@ -601,9 +628,8 @@ void cadastrarRecepcionista() {
             return;
         }
 
-        // Pega o array "medicos" do objeto JSON principal
-        enfermeiro_array = cJSON_GetObjectItemCaseSensitive(root_json, "recepcionistas");
-        if (!cJSON_IsArray(enfermeiro_array)) {
+        recepcionista_array = cJSON_GetObjectItemCaseSensitive(root_json, "recepcionistas");
+        if (!cJSON_IsArray(recepcionista_array)) {
             fprintf(stderr, "Erro: A chave 'recepcionistas' não é um array no JSON.\n");
             cJSON_Delete(root_json);
             return;
@@ -616,37 +642,36 @@ void cadastrarRecepcionista() {
     for (int i = 0; i < totalRecepcionistas; i++) {
         printf("\n--- Cadastrando o (a) Recepcionista %d de %d ---\n", i + 1, totalRecepcionistas);
         printf("Insira o Nome do(a) Recepcionista: ");
-        scanf(" %[^\n]", nomeRecepcionista);
+        scanf(" %49[^\n]", nomeRecepcionista);
         printf("Insira a Idade do(a) Recepcionista: ");
-        scanf("%d", idadeRecepcionista);
+        scanf("%d", &idadeRecepcionista);
         printf("Insira o CPF do(a) Recepcionista: ");
-        scanf(" %s", cpf_recepcionista);
+        scanf(" %14s", cpf_recepcionista);
         printf("Insira o Login do Usuário do(a) Recepcionista: ");
-        scanf(" %s", usuarios.login);
+        scanf(" %19s", loginRecepcionista);
         printf("Insira a Senha do Usuário do(a) Recepcionista: ");
-        scanf(" %s", usuarios.senha);
-        if (!cadastrarLogineSenha(usuarios, "recepcionista")){
+        scanf(" %29s", senhaRecepcionista);
+        
+        if (!cadastrarLogineSenha(loginRecepcionista, senhaRecepcionista, "recepcionista")){
             printf("\nCadastro de recepcionista cancelado, Usuario duplicado.\n");
             system("pause");
+            cJSON_Delete(root_json);
             return;
         } else {
-             // Cria um novo objeto JSON para o Recepcionista
-        cJSON *recepcionista_obj = cJSON_CreateObject();
-        cJSON_AddStringToObject(recepcionista_obj, "nome", nomeRecepcionista);
-        cJSON_AddNumberToObject(recepcionista_obj, "idade", idadeRecepcionista);
-        cJSON_AddStringToObject(recepcionista_obj, "CPF", cpf_recepcionista);
+            // Cria um novo objeto JSON para o Recepcionista
+            cJSON *recepcionista_obj = cJSON_CreateObject();
+            cJSON_AddStringToObject(recepcionista_obj, "nome", nomeRecepcionista);
+            cJSON_AddNumberToObject(recepcionista_obj, "idade", idadeRecepcionista);
+            cJSON_AddStringToObject(recepcionista_obj, "CPF", cpf_recepcionista);
 
-        // Adiciona o objeto do novo Recepcionista ao array de Recepcionista
-        cJSON_AddItemToArray(recepcionista_array, recepcionista_array);
+            // CORREÇÃO: Adiciona o objeto correto ao array
+            cJSON_AddItemToArray(recepcionista_array, recepcionista_obj);
 
-        printf("\nRecepcionista %s cadastrado com sucesso!\n", nomeRecepcionista);
-        system("pause");
-        system("cls");
-        printf(" [-------------- CADASTRAR RECEPCIONISTA(A) --------------]\n\n");
+            printf("\nRecepcionista %s cadastrado com sucesso!\n", nomeRecepcionista);
         }
     }
 
-    // Converte o objeto cJSON modificado de volta para uma string formatada
+    // Salvar o arquivo
     char *json_string_modificado = cJSON_Print(root_json);
     if (json_string_modificado == NULL) {
         fprintf(stderr, "Erro ao gerar a string JSON.\n");
@@ -654,7 +679,6 @@ void cadastrarRecepcionista() {
         return;
     }
 
-    // Abre o arquivo em modo de escrita ("w") para sobrescrever com o conteúdo atualizado
     file = fopen("recepcionistas.json", "w");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo para escrita");
@@ -666,62 +690,67 @@ void cadastrarRecepcionista() {
     fputs(json_string_modificado, file);
     fclose(file);
 
-    // Libera a memória alocada pela cJSON
     free(json_string_modificado);
     cJSON_Delete(root_json);
 
-    printf("Todos os recepcionistas foram salvos com sucesso em 'enfermeiros.json'!\n");
+    printf("Todos os recepcionistas foram salvos com sucesso em 'recepcionistas.json'!\n");  // Corrigido nome do arquivo
     system("pause");
-    return;
-
 }
 
-bool cadastrarLogineSenha(Usuario usuarios, char *tipo) {
+bool cadastrarLogineSenha(const char* login, const char* senha, const char* tipo) {
+    cJSON *usuario_json = lerArquivoJson("usuarios.json");
+    
+    // Se o arquivo não existe, criar um novo
+    if (usuario_json == NULL) {
+        usuario_json = cJSON_CreateObject();
+        cJSON *usuarios_array = cJSON_CreateArray();
+        cJSON_AddItemToObject(usuario_json, "usuarios", usuarios_array);
+    }
 
-    cJSON *usuario_json =  lerArquivoJson("usuarios.json"); // Carrega os usuários existentes
     cJSON *usuarios_array = cJSON_GetObjectItemCaseSensitive(usuario_json, "usuarios");
     if (!cJSON_IsArray(usuarios_array)) {
         fprintf(stderr, "Erro: A chave 'usuarios' não é um array no JSON.\n");
         cJSON_Delete(usuario_json);
-        return FALSE;
-    }{   
-    if (usuarioExiste(usuarios.login)) {
-        printf("Erro: O login '%s' já existe. Escolha outro login.\n", usuarios.login);
-        cJSON_Delete(usuario_json);
-        return FALSE;
-    } else {
-        // Continua o processo de cadastro
-        // Cria um novo objeto JSON para o usuário
-        cJSON *usuario_obj = cJSON_CreateObject();
-        cJSON_AddStringToObject(usuario_obj, "login", usuarios.login);
-        cJSON_AddStringToObject(usuario_obj, "senha", usuarios.senha);
-        cJSON_AddStringToObject(usuario_obj, "tipo", tipo);
-        // Adiciona o objeto do novo usuário ao array de usuários
-        cJSON_AddItemToArray(usuarios_array, usuario_obj);
-        // Converte o objeto cJSON modificado de volta para uma string formatada
-        char *json_string_modificado = cJSON_Print(usuario_json);
-        if (json_string_modificado == NULL) {
-            fprintf(stderr, "Erro ao gerar a string JSON.\n");
-            cJSON_Delete(usuario_json);
-            return FALSE;
-        }
-        // Abre o arquivo em modo de escrita ("w") para sobrescrever com o conteúdo atualizado
-        FILE *file = fopen("usuarios.json", "w");
-        if (file == NULL) {
-            perror("Erro ao abrir o arquivo para escrita");
-            cJSON_Delete(usuario_json);
-            free(json_string_modificado);
-            return FALSE;
-
-            fputs(json_string_modificado, file);
-            fclose(file);
-            // Libera a memória alocada pela cJSON
-            free(json_string_modificado);
-            cJSON_Delete(usuario_json);
-            return TRUE;
-            }
-        }
+        return false;
     }
+
+    // Verificar se usuário já existe
+    if (usuarioExiste(login)) {
+        printf("Erro: O login '%s' já existe. Escolha outro login.\n", login);
+        cJSON_Delete(usuario_json);
+        return false;
+    }
+
+    // Criar novo objeto de usuário
+    cJSON *usuario_obj = cJSON_CreateObject();
+    cJSON_AddStringToObject(usuario_obj, "login", login);
+    cJSON_AddStringToObject(usuario_obj, "senha", senha);
+    cJSON_AddStringToObject(usuario_obj, "tipo", tipo);
+
+    // Adicionar ao array
+    cJSON_AddItemToArray(usuarios_array, usuario_obj);
+
+    // Salvar no arquivo
+    char *json_string = cJSON_Print(usuario_json);
+    FILE *file = fopen("usuarios.json", "w");
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo para escrita");
+        cJSON_Delete(usuario_json);
+        free(json_string);
+        return false;
+    }
+
+    fputs(json_string, file);
+    fclose(file);
+
+    // Limpar memória
+    free(json_string);
+    cJSON_Delete(usuario_json);
+    
+    // Atualizar lista de usuários em memória
+    lerUsuariosJSON();
+    
+    return true;
 }
 
 void excluirUsuario() {
@@ -991,15 +1020,254 @@ void gerenciarPacientes() {
 }
 
 void cadastrarPaciente() {
+    Paciente novoPaciente;
+    char continuar;
 
+    do {
+        system("cls");
+        printf(" [-------------- CADASTRAR PACIENTE --------------]\n\n");
+
+        printf("Nome do Paciente: ");
+        scanf(" %[^\n]", novoPaciente.nome);
+        
+        printf("Idade: ");
+        scanf("%d", &novoPaciente.idade);
+        
+        printf("Sexo (M/F): ");
+        scanf(" %c", &novoPaciente.sexo);
+        novoPaciente.sexo = toupper(novoPaciente.sexo);
+        
+        printf("Prioridade (1-Baixa, 2-Media, 3-Alta, 4-Emergencia): ");
+        scanf("%d", &novoPaciente.prioridade);
+        
+        printf("Diagnostico: ");
+        scanf(" %[^\n]", novoPaciente.diagnostico);
+
+        // Confirmação dos dados
+        printf("\n--- Dados do Paciente ---\n");
+        printf("Nome: %s\n", novoPaciente.nome);
+        printf("Idade: %d\n", novoPaciente.idade);
+        printf("Sexo: %c\n", novoPaciente.sexo);
+        printf("Prioridade: %d\n", novoPaciente.prioridade);
+        printf("Diagnóstico: %s\n", novoPaciente.diagnostico);
+        
+        printf("\nConfirmar cadastro? (S/N): ");
+        scanf(" %c", &continuar);
+        continuar = toupper(continuar);
+
+        if (continuar == 'S') {
+            if (cadastrarPacienteJSON(novoPaciente)) {
+                printf("\nPaciente cadastrado com sucesso!\n");
+            } else {
+                printf("\nErro ao cadastrar paciente!\n");
+            }
+        } else {
+            printf("\nCadastro cancelado!\n");
+        }
+
+        printf("\nDeseja cadastrar outro paciente? (S/N): ");
+        scanf(" %c", &continuar);
+        continuar = toupper(continuar);
+
+    } while (continuar == 'S');
+}
+
+bool cadastrarPacienteJSON(Paciente novoPaciente) {
+    // Tenta abrir o arquivo para leitura
+    FILE *file = fopen("pacientes.json", "rb");
+    cJSON *root_json = NULL;
+    cJSON *pacientes_array = NULL;
+
+    if (file == NULL) {
+        // Arquivo não existe, criar um novo
+        root_json = cJSON_CreateObject();
+        pacientes_array = cJSON_CreateArray();
+        cJSON_AddItemToObject(root_json, "pacientes", pacientes_array);
+    } else {
+        // Arquivo existe, ler e analisar o conteúdo
+        fseek(file, 0, SEEK_END);
+        long tamanho_arquivo = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        char *buffer = (char *)malloc(tamanho_arquivo + 1);
+        if (buffer == NULL) {
+            fclose(file);
+            return false;
+        }
+
+        fread(buffer, 1, tamanho_arquivo, file);
+        fclose(file);
+        buffer[tamanho_arquivo] = '\0';
+
+        root_json = cJSON_Parse(buffer);
+        free(buffer);
+
+        if (root_json == NULL) {
+            return false;
+        }
+
+        pacientes_array = cJSON_GetObjectItemCaseSensitive(root_json, "pacientes");
+        if (!cJSON_IsArray(pacientes_array)) {
+            cJSON_Delete(root_json);
+            return false;
+        }
+    }
+
+    // Criar objeto JSON para o novo paciente
+    cJSON *paciente_obj = cJSON_CreateObject();
+    cJSON_AddStringToObject(paciente_obj, "nome", novoPaciente.nome);
+    cJSON_AddNumberToObject(paciente_obj, "idade", novoPaciente.idade);
+    
+    // Converter char para string para JSON
+    char sexo_str[2] = {novoPaciente.sexo, '\0'};
+    cJSON_AddStringToObject(paciente_obj, "sexo", sexo_str);
+    
+    cJSON_AddNumberToObject(paciente_obj, "prioridade", novoPaciente.prioridade);
+    cJSON_AddStringToObject(paciente_obj, "diagnostico", novoPaciente.diagnostico);
+    
+    // Adicionar status padrão
+    cJSON_AddStringToObject(paciente_obj, "status", "Ativo");
+    cJSON_AddStringToObject(paciente_obj, "leito", "Nenhum");
+
+    // Adicionar ao array
+    cJSON_AddItemToArray(pacientes_array, paciente_obj);
+
+    // Salvar no arquivo
+    char *json_string = cJSON_Print(root_json);
+    file = fopen("pacientes.json", "w");
+    if (file == NULL) {
+        cJSON_Delete(root_json);
+        free(json_string);
+        return false;
+    }
+
+    fputs(json_string, file);
+    fclose(file);
+
+    free(json_string);
+    cJSON_Delete(root_json);
+
+    return true;
 }
 
 void excluirPaciente() {
-
+    char nomeBusca[50];
+    
+    system("cls");
+    printf(" [-------------- EXCLUIR PACIENTE --------------]\n\n");
+    
+    // Primeiro mostrar todos os pacientes
+    verPacientes();
+    
+    printf("Digite o nome completo do paciente que deseja excluir: ");
+    scanf(" %[^\n]", nomeBusca);
+    
+    cJSON *pacientes_json = lerArquivoJson("pacientes.json");
+    if (pacientes_json == NULL) {
+        printf("Nenhum paciente cadastrado.\n");
+        system("pause");
+        return;
+    }
+    
+    cJSON *pacientes_array = cJSON_GetObjectItemCaseSensitive(pacientes_json, "pacientes");
+    if (!cJSON_IsArray(pacientes_array)) {
+        printf("Erro ao carregar lista de pacientes.\n");
+        cJSON_Delete(pacientes_json);
+        system("pause");
+        return;
+    }
+    
+    int encontrou = 0;
+    int tamanhoArray = cJSON_GetArraySize(pacientes_array);
+    
+    for (int i = 0; i < tamanhoArray; i++) {
+        cJSON *paciente = cJSON_GetArrayItem(pacientes_array, i);
+        cJSON *nome = cJSON_GetObjectItemCaseSensitive(paciente, "nome");
+        
+        if (nome && cJSON_IsString(nome) && strcmp(nome->valuestring, nomeBusca) == 0) {
+            char confirmar;
+            printf("\nPaciente encontrado: %s\n", nome->valuestring);
+            printf("Tem certeza que deseja excluir? (S/N): ");
+            scanf(" %c", &confirmar);
+            confirmar = toupper(confirmar);
+            
+            if (confirmar == 'S') {
+                cJSON_DeleteItemFromArray(pacientes_array, i);
+                encontrou = 1;
+                
+                // Salvar alterações
+                char *jsonAtualizado = cJSON_Print(pacientes_json);
+                FILE *file = fopen("pacientes.json", "w");
+                if (file) {
+                    fputs(jsonAtualizado, file);
+                    fclose(file);
+                    printf("Paciente excluido com sucesso!\n");
+                } else {
+                    printf("Erro ao salvar alterações.\n");
+                }
+                free(jsonAtualizado);
+            } else {
+                printf("Exclusão cancelada.\n");
+            }
+            break;
+        }
+    }
+    
+    if (!encontrou) {
+        printf("Paciente não encontrado.\n");
+    }
+    
+    cJSON_Delete(pacientes_json);
+    system("pause");
 }
 
 void verPacientes() {
+    system("cls");
+    printf(" [-------------- LISTA DE PACIENTES --------------]\n\n");
 
+    cJSON *pacientes_json = lerArquivoJson("pacientes.json");
+    if (pacientes_json == NULL) {
+        printf("Nenhum paciente cadastrado.\n");
+        system("pause");
+        return;
+    }
+
+    cJSON *pacientes_array = cJSON_GetObjectItemCaseSensitive(pacientes_json, "pacientes");
+    if (!cJSON_IsArray(pacientes_array) || cJSON_GetArraySize(pacientes_array) == 0) {
+        printf("Nenhum paciente cadastrado.\n");
+        cJSON_Delete(pacientes_json);
+        system("pause");
+        return;
+    }
+
+    int total = cJSON_GetArraySize(pacientes_array);
+    printf("Total de pacientes cadastrados: %d\n\n", total);
+
+    cJSON *paciente;
+    int i = 0;
+    cJSON_ArrayForEach(paciente, pacientes_array) {
+        cJSON *nome = cJSON_GetObjectItem(paciente, "nome");
+        cJSON *idade = cJSON_GetObjectItem(paciente, "idade");
+        cJSON *sexo = cJSON_GetObjectItem(paciente, "sexo");
+        cJSON *prioridade = cJSON_GetObjectItem(paciente, "prioridade");
+        cJSON *diagnostico = cJSON_GetObjectItem(paciente, "diagnostico");
+        cJSON *status = cJSON_GetObjectItem(paciente, "status");
+        cJSON *leito = cJSON_GetObjectItem(paciente, "leito");
+
+        printf("--- Paciente %d ---\n", i + 1);
+        printf("Nome: %s\n", nome ? nome->valuestring : "N/A");
+        printf("Idade: %d\n", idade ? idade->valueint : 0);
+        printf("Sexo: %s\n", sexo ? sexo->valuestring : "N/A");
+        printf("Prioridade: %d\n", prioridade ? prioridade->valueint : 0);
+        printf("Diagnostico: %s\n", diagnostico ? diagnostico->valuestring : "N/A");
+        printf("Status: %s\n", status ? status->valuestring : "Ativo");
+        printf("Leito: %s\n", leito ? leito->valuestring : "Nenhum");
+        printf("\n");
+        i++;
+    }
+
+    cJSON_Delete(pacientes_json);
+    system("pause");
 }
 
 //--------------------------- Gerenciar Leitos ---------------------------
