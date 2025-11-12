@@ -1591,6 +1591,47 @@ void excluirPaciente() {
 
 void verPacientes() {
 
+    if (totalPacientes == 0) {
+    printf("\nNão há pacientes cadastrados.\n\n");
+    system("pause");
+    return;
+    }
+    
+    int escolhaPaciente;
+    while(1) {
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> VER DADOS DE UM PACIENTE <---\n");
+        printf("Escolha um paciente para ver suas informações [0 para voltar]: \n\n");
+        for (int i=0;i<totalPacientes;i++) {
+            printf("%d. %s\n", i+1, pacientesSistema[i].nome);
+        }
+        printf("\nEscolha: ");
+        scanf("%d",&escolhaPaciente);
+
+        if (escolhaPaciente>=1 && escolhaPaciente<=totalPacientes) {
+            break;
+        }
+        if (escolhaPaciente == 0) {
+            return;
+        }
+
+        printf("\nOpção inválida!\n\n");
+        system("pause");
+    }
+
+    escolhaPaciente -= 1;
+
+    system("cls");
+    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" ---> VER DADOS DE UM PACIENTE <---\n");
+    printf(" - Dados do paciente %s:\n", pacientesSistema[escolhaPaciente].nome);
+    printf("Idade        : %d\n",pacientesSistema[escolhaPaciente].idade);
+    printf("Sexo         : %s\n",pacientesSistema[escolhaPaciente].sexo);
+    printf("Prioridade   : %d\n",pacientesSistema[escolhaPaciente].prioridade);
+    printf("Diagnóstico  : %s\n\n",pacientesSistema[escolhaPaciente].diagnostico);
+
+    system("pause");
 }
 
 //--------------------------- Gerenciar Leitos ---------------------------
