@@ -50,5 +50,18 @@
 			"login":	"gabrielp",
 			"nome":	"Gabriel",
 			"idade":	25
+		}],
+	"pacientes":	[{
+			"nome":	"Kaique",
+			"idade":	19,
+			"sexo":	"m",
+			"prioridade":	3,
+			"diagnostico":	"O peito tá crescendo acima do normal."
+		}, {
+			"nome":	"Mattia Poletto",
+			"idade":	23,
+			"sexo":	"m",
+			"prioridade":	1,
+			"diagnostico":	"Tá ficando fortão"
 		}]
 }

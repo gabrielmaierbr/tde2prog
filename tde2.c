@@ -40,7 +40,7 @@ typedef struct {
 typedef struct {
     char nome[50];
     int idade;
-    char sexo;
+    char sexo[1];
     int prioridade;
     char diagnostico[100];
 } Paciente;
@@ -87,6 +87,7 @@ int totalUsuarios = 0;
 int totalMedicos = 0;
 int totalEnfermeiros = 0;
 int totalRecepcionistas = 0;
+int totalPacientes = 0;
 Usuario usuariosSistema[50];
 Usuario usuarioLogado;
 Medico medicosSistema[50];
@@ -356,6 +357,43 @@ void jsonParaStructs() {
                 strcpy(recepcionistasSistema[totalRecepcionistas].nome, nome->valuestring);
                 recepcionistasSistema[totalRecepcionistas].idade = idade->valueint;
                 totalRecepcionistas++;
+            }
+        }
+    }
+
+    // Procura o array "pacientes" dentro do cJSON
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+
+    if (pacientesArray == NULL) {
+        pacientesArray = cJSON_CreateArray();
+        cJSON_AddItemToObject(root, "pacientes", pacientesArray);
+
+        char *jsonAtualizado = cJSON_Print(root);
+        FILE *file = fopen("informacoes.json", "w");
+        fputs(jsonAtualizado, file);
+        fclose(file);
+        free(jsonAtualizado);
+    } else {
+        totalPacientes = 0;
+        cJSON *pacientesItem;
+
+        // Percorre cada item do array (isso é um for)
+        cJSON_ArrayForEach(pacientesItem, pacientesArray) {
+            if (totalPacientes >= 100) break;
+            
+            cJSON *nome = cJSON_GetObjectItem(pacientesItem, "nome");
+            cJSON *idade = cJSON_GetObjectItem(pacientesItem, "idade");
+            cJSON *sexo = cJSON_GetObjectItem(pacientesItem, "sexo");
+            cJSON *prioridade = cJSON_GetObjectItem(pacientesItem, "prioridade");
+            cJSON *diagnostico = cJSON_GetObjectItem(pacientesItem, "diagnostico");
+            
+            if (cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(sexo) && cJSON_IsNumber(prioridade) && cJSON_IsString(diagnostico)) {
+                strcpy(pacientesSistema[totalPacientes].nome, nome->valuestring);
+                pacientesSistema[totalPacientes].idade = idade->valueint;
+                strcpy(pacientesSistema[totalPacientes].sexo, sexo->valuestring);
+                pacientesSistema[totalPacientes].prioridade = prioridade->valueint;
+                strcpy(pacientesSistema[totalPacientes].diagnostico, diagnostico->valuestring);
+                totalPacientes++;
             }
         }
     }
@@ -1349,11 +1387,206 @@ void gerenciarPacientes() {
 }
 
 void cadastrarPaciente() {
+    system("cls");
+    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" ---> CADASTRAR PACIENTE <---\n");
+
+    FILE *file = fopen("informacoes.json","r");
+    cJSON *root;
+    char *buffer;
+
+    // Se o arquivo não for encontrado
+    if(!file) {
+        return;
+    }
+
+    // Vê o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Lê o arquivo e põe no ponteiro 'buffer'
+    buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, file);
+    buffer[tamanho] = '\0';
+
+    // Fecha o arquivo
+    fclose(file);
+
+    // Transforma em formato JSON
+    root = cJSON_Parse(buffer);
+    free(buffer);
+
+    // Caso o arquivo não possa ser transformado
+    if(!root) {
+        return;
+    }
+
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+
+    int qtd_de_pacientes;
+    printf("Quantos pacientes deseja cadastrar? ");
+    scanf("%d",&qtd_de_pacientes);
+
+    for (int i=0;i<qtd_de_pacientes;i++) {
+        system("cls");
+
+        cJSON *novoPaciente = cJSON_CreateObject();
+
+        printf("\n --- Cadastrando Paciente %d de %d",i+1,qtd_de_pacientes);
+        printf("\nInsira o Nome do Paciente: ");
+        scanf(" %[^\n]", pacientesSistema[totalPacientes].nome);
+        printf("\nInsira a Idade do Paciente: ");
+        scanf("%d", &pacientesSistema[totalPacientes].idade);
+
+        char temp[20];
+        while (1) {
+            printf("\nInsira o sexo do Paciente: ");
+            scanf(" %s", temp);
+            if (strcmp(temp,"m") == 0 || strcmp(temp,"M") == 0 || strcmp(temp,"f") == 0 || strcmp(temp,"F") == 0) {
+                strcpy(pacientesSistema[totalPacientes].sexo, temp);
+                break;
+            }
+            printf("\nOpção inválida! Só é possível \'m\' ou \'f\'.\n\n");
+            system("pause");
+        }
+
+        int x;
+        while (1) {
+            printf("\nInsira o grau de prioridade do Paciente [1 a 5]: ");
+            scanf("%d", &x);
+            if (x>=1 && x<=5) {
+                pacientesSistema[totalPacientes].prioridade = x;
+                break;
+            }
+            printf("\nOpção inválida! Só é possível de 1 a 5\n\n");
+            system("pause");
+        }
+        
+        printf("\nEscreva o diagnóstico do Paciente: ");
+        scanf(" %[^\n]", pacientesSistema[totalPacientes].diagnostico);
+
+        // Objeto do Paciente
+        cJSON_AddStringToObject(novoPaciente, "nome", pacientesSistema[totalPacientes].nome);
+        cJSON_AddNumberToObject(novoPaciente, "idade", pacientesSistema[totalPacientes].idade);
+        cJSON_AddStringToObject(novoPaciente, "sexo", pacientesSistema[totalPacientes].sexo);
+        cJSON_AddNumberToObject(novoPaciente, "prioridade", pacientesSistema[totalPacientes].prioridade);
+        cJSON_AddStringToObject(novoPaciente, "diagnostico", pacientesSistema[totalPacientes].diagnostico);
+
+        // Adicionando o objeto ao JSON
+        cJSON_AddItemToArray(pacientesArray, novoPaciente);
+
+        printf("\nPaciente %s cadastrado com sucesso!\n\n", pacientesSistema[totalPacientes].nome);
+        system("pause");
+
+        totalPacientes++;
+
+    }
+
+    // Salvar tudo no json
+    FILE *fileOut = fopen("informacoes.json","w");
+    char *jsonAtualizado = cJSON_Print(root);
+    fprintf(fileOut, "%s", jsonAtualizado);
+
+    fclose(fileOut);
+    free(jsonAtualizado);
+    cJSON_Delete(root);
 
 }
 
 void excluirPaciente() {
+    system("cls");
+    printf(" [---------- %s -----------]\n\n", titulo);
+    printf(" ---> EXCLUIR PACIENTE <---\n");
 
+    // Verifica se há pacientes cadastrados
+    if (totalPacientes == 0) {
+        printf("\nNão há pacientes cadastrados.\n\n");
+        system("pause");
+        return;
+    }
+
+    // Pergunta qual paciente quer que exclua
+    int indiceExcluir;
+    while (1) {
+        system("cls");
+        printf(" [---------- %s -----------]\n\n", titulo);
+        printf(" ---> EXCLUIR PACIENTE <---\n");
+        printf("Qual paciente deseja excluir [0 para voltar]?\n\n");
+        for (int i=0;i<totalPacientes;i++) {
+            printf("%d. %s\n",i+1,pacientesSistema[i].nome);
+        }
+        printf("Escolha: ");
+        scanf("%d",&indiceExcluir);
+        if (indiceExcluir>=1 && indiceExcluir<=totalPacientes) {
+            break;
+        }
+        if (indiceExcluir == 0) {
+            return;
+        }
+        printf("\nOpção inválida!\n\n");
+        system("pause");
+        system("cls");
+    }
+    indiceExcluir -= 1;
+    char pacienteExcluir[50];
+    strcpy(pacienteExcluir,pacientesSistema[indiceExcluir].nome);
+
+    // Remove o paciente da struct pacientesSistema
+    for (int i=indiceExcluir;i<totalPacientes-1;i++) {
+        pacientesSistema[i] = pacientesSistema[i+1];
+    }
+    totalPacientes--;
+    pacientesSistema[totalPacientes] = (Paciente){0};
+
+    // Atualização o JSON
+    FILE *file = fopen("informacoes.json","r");
+    if (!file) {
+        printf("Erro ao abrir o arquivo JSON.\n\n");
+        system("pause");
+        return;
+    }
+
+    // Descobre o tamanho do arquivo e põe na variável "tamanho"
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Coloca no ponteiro "buffer"
+    char *buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, file);
+    buffer[tamanho] = '\0';
+    fclose(file);
+
+    // transofrma no formato JSON
+    cJSON *root = cJSON_Parse(buffer);
+    free(buffer);
+
+    if (!root) {
+        printf("Erro ao interpretar o arquivo JSON.\n\n");
+        return;
+    }
+
+    // Procura o array "pacientes"
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+    cJSON_DeleteItemFromArray(pacientesArray, indiceExcluir);
+
+    // Salva no arquivo
+    file = fopen("informacoes.json", "w");
+    if (!file) {
+        printf("Erro ao abrir o arquivo JSON para escrita.\n\n");
+        cJSON_Delete(root);
+        return;
+    }
+
+    char *jsonAtualizado = cJSON_Print(root);
+    fprintf(file, "%s", jsonAtualizado);
+    fclose(file);
+    free(jsonAtualizado);
+    cJSON_Delete(root);
+
+    printf("\nPaciente '%s' excluído com sucesso!\n\n", pacienteExcluir);
+    system("pause");
 }
 
 void verPacientes() {
