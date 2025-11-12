@@ -57,14 +57,14 @@
 			"sexo":	"m",
 			"prioridade":	3,
 			"diagnostico":	"Tá ficando muito forte!",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}, {
 			"nome":	"Kaique",
 			"idade":	19,
 			"sexo":	"m",
 			"prioridade":	3,
 			"diagnostico":	"Tá ficando doidão!",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}, {
 			"nome":	"Natalia Poletto",
 			"idade":	26,
@@ -72,5 +72,21 @@
 			"prioridade":	1,
 			"diagnostico":	"Tá cheirando muito!",
 			"alocadoLeito":	false
+		}],
+	"leitos":	[{
+			"nome":	"Leito UTI 12",
+			"paciente":	"vazio"
+		}, {
+			"nome":	"Leito UTI 15",
+			"paciente":	"Kaique"
+		}, {
+			"nome":	"Leito UTI 22",
+			"paciente":	"Mattia Poletto"
+		}, {
+			"nome":	"Leito UTI 99",
+			"paciente":	"vazio"
+		}, {
+			"nome":	"Leito UTI 88",
+			"paciente":	"vazio"
 		}]
 }
