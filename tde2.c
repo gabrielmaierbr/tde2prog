@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
     char nome[50];
     int idade;
-    char sexo[1];
+    char sexo[2];
     int prioridade;
     char diagnostico[100];
     bool alocadoLeito;
@@ -2414,8 +2414,167 @@ void desalocarPacienteDoLeito() {
 //--------------------------- Exclusivo do Médico ---------------------------
 
 void darAlta() {
+    system("cls");
+
+    if (totalLeitos == 0 || totalPacientes == 0) {
+        if (totalLeitos == 0 && totalPacientes != 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DAR ALTA <---\n");
+            printf("\nNão há leitos cadastrados!\n\n");
+            system("pause");
+        } else if (totalLeitos != 0 && totalPacientes == 0) {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DAR ALTA <---\n");
+            printf("\nNão há pacientes cadastrados!\n\n");
+            system("pause");
+        } else {
+            printf(" [---------------- %s ----------------]\n\n", titulo);
+            printf(" ---> DAR ALTA <---\n");
+            printf("\nNão há nem leitos nem pacientes cadastrados!\n\n");
+            system("pause");
+        }
+        return;
+    }
+
+    int numeroPacientesNoLeito = 0;
+    char pacientesNoLeito[100][50];
+
+    // Cria uma lista apenas com os pacientes alocados em leitos
+    for (int i = 0; i < totalPacientes; i++) {
+        if (pacientesSistema[i].alocadoLeito == true) {
+            strcpy(pacientesNoLeito[numeroPacientesNoLeito], pacientesSistema[i].nome);
+            numeroPacientesNoLeito++;
+        }
+    }
+
+    if (numeroPacientesNoLeito == 0) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> DAR ALTA <---\n");
+        printf("\nNão há pacientes em leitos!\n\n");
+        system("pause");
+        return;
+    }
+
+    int indicePacienteDarAlta;
+    while (1) {
+        printf(" [---------------- %s ----------------]\n\n", titulo);
+        printf(" ---> DAR ALTA <---\n");
+        printf("Escolha um paciente [0 para voltar]:\n\n");
+        for (int i = 0; i < numeroPacientesNoLeito; i++) {
+            printf("%d. %s\n", i + 1, pacientesNoLeito[i]);
+        }
+        printf("\nEscolha: ");
+        scanf("%d", &indicePacienteDarAlta);
+
+        if (indicePacienteDarAlta >= 1 && indicePacienteDarAlta <= numeroPacientesNoLeito) {
+            system("cls");
+            break;
+        }
+        if (indicePacienteDarAlta == 0) {
+            return;
+        }
+    }
+    indicePacienteDarAlta -= 1;
+
+    char pacienteDarAlta[50];
+    strcpy(pacienteDarAlta, pacientesNoLeito[indicePacienteDarAlta]);
+
+    // Procurar o paciente no sistema
+    int indiceParaRemover = -1;
+    for (int i = 0; i < totalPacientes; i++) {
+        if (strcmp(pacientesSistema[i].nome, pacienteDarAlta) == 0) {
+            indiceParaRemover = i;
+            break;
+        }
+    }
+
+    // Remover o paciente do array (desloca todos para a esquerda)
+    for (int i = indiceParaRemover; i < totalPacientes - 1; i++) {
+        pacientesSistema[i] = pacientesSistema[i + 1];
+    }
+    totalPacientes--;
+
+    for (int i=0;i<totalLeitos;i++) {
+        if (strcmp(pacienteDarAlta,leitosSistema[i].paciente) == 0) {
+            strcpy(leitosSistema[i].paciente,"vazio");
+            break;
+        }
+    }
+
+    printf("\nPaciente '%s' recebeu alta com sucesso!\n\n", pacienteDarAlta);
+    system("pause");
+
+    // Atualizando o JSON
+    FILE *file = fopen("informacoes.json", "r");
+    if (!file) {
+        printf("Erro ao abrir o arquivo JSON!\n");
+        return;
+    }
+
+    // Lê o arquivo inteiro
+    fseek(file, 0, SEEK_END);
+    long tamanho = ftell(file);
+    rewind(file);
+
+    char *conteudo = malloc(tamanho + 1);
+    fread(conteudo, 1, tamanho, file);
+    conteudo[tamanho] = '\0';
+    fclose(file);
+
+    // Parseia o JSON
+    cJSON *root = cJSON_Parse(conteudo);
+    free(conteudo);
+
+    if (!root) {
+        printf("Erro ao ler JSON!\n");
+        return;
+    }
+
+    // --- 1. Atualiza o leito (torna "vazio") ---
+    cJSON *leitosArray = cJSON_GetObjectItem(root, "leitos");
+    if (cJSON_IsArray(leitosArray)) {
+        int tamanhoLeitos = cJSON_GetArraySize(leitosArray);
+        for (int i = 0; i < tamanhoLeitos; i++) {
+            cJSON *leito = cJSON_GetArrayItem(leitosArray, i);
+            cJSON *paciente = cJSON_GetObjectItem(leito, "paciente");
+            if (paciente && strcmp(paciente->valuestring, pacienteDarAlta) == 0) {
+                cJSON_ReplaceItemInObject(leito, "paciente", cJSON_CreateString("vazio"));
+                break;
+            }
+        }
+    }
+
+    // --- 2. Remove o paciente da lista "pacientes" ---
+    cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
+    if (cJSON_IsArray(pacientesArray)) {
+        int tamanhoPacientes = cJSON_GetArraySize(pacientesArray);
+        for (int i = 0; i < tamanhoPacientes; i++) {
+            cJSON *paciente = cJSON_GetArrayItem(pacientesArray, i);
+            cJSON *nome = cJSON_GetObjectItem(paciente, "nome");
+
+            if (nome && strcmp(nome->valuestring, pacienteDarAlta) == 0) {
+                cJSON_DeleteItemFromArray(pacientesArray, i);
+                break;
+            }
+        }
+    }
+
+    // --- 3. Escreve o JSON atualizado de volta ---
+    char *jsonAtualizado = cJSON_Print(root);
+    file = fopen("informacoes.json", "w");
+    if (file) {
+        fputs(jsonAtualizado, file);
+        fclose(file);
+        printf("Paciente '%s' removido e leito liberado com sucesso!\n", pacienteDarAlta);
+    } else {
+        printf("Erro ao salvar o JSON atualizado!\n");
+    }
+
+    free(jsonAtualizado);
+    cJSON_Delete(root);
 
 }
+
 
 //---------------------------------- MENUS ----------------------------------
 

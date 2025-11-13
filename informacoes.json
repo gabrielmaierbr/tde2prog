@@ -3,8 +3,17 @@
 			"login":	"admin",
 			"senha":	"adm123",
 			"tipo":	"admin"
+		}, {
+			"login":	"mattiap",
+			"senha":	"123321",
+			"tipo":	"medico"
 		}],
-	"medicos":	[],
+	"medicos":	[{
+			"login":	"mattiap",
+			"nome":	"Mattia",
+			"especialidade":	"cirurgião",
+			"crm":	"2423234"
+		}],
 	"enfermeiros":	[],
 	"recepcionistas":	[],
 	"pacientes":	[{
@@ -13,21 +22,21 @@
 			"sexo":	"m",
 			"prioridade":	1,
 			"diagnostico":	"febre",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}, {
 			"nome":	"Natalia Poletto",
 			"idade":	26,
 			"sexo":	"f",
 			"prioridade":	2,
 			"diagnostico":	"tosse",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}, {
 			"nome":	"Megazord",
 			"idade":	29,
 			"sexo":	"m",
 			"prioridade":	3,
 			"diagnostico":	"sinusite",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}, {
 			"nome":	"Kaique",
 			"idade":	19,
@@ -41,22 +50,22 @@
 			"sexo":	"m",
 			"prioridade":	3,
 			"diagnostico":	"Caiu da prancha",
-			"alocadoLeito":	false
+			"alocadoLeito":	true
 		}],
 	"leitos":	[{
 			"nome":	"UTI 4",
-			"paciente":	"vazio"
+			"paciente":	"Gabriel Medina"
 		}, {
 			"nome":	"UTI 1",
-			"paciente":	"vazio"
+			"paciente":	"Natalia Poletto"
 		}, {
 			"nome":	"UTI 99",
-			"paciente":	"vazio"
+			"paciente":	"Megazord"
 		}, {
 			"nome":	"UTI 42",
 			"paciente":	"vazio"
 		}, {
 			"nome":	"UTI 88",
-			"paciente":	"vazio"
+			"paciente":	"Mattia Poletto"
 		}]
 }
