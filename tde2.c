@@ -18,7 +18,6 @@ typedef struct {
 typedef struct {
     char login[20];
     char nome[50];
-    int idade;
     char especialidade[20];
     char crm[15];
 } Medico;
@@ -26,7 +25,6 @@ typedef struct {
 typedef struct {
     char login[20];
     char nome[50];
-    int idade;
     char especialidade[20];
     char coren[15];
 } Enfermeiro;
@@ -34,7 +32,6 @@ typedef struct {
 typedef struct {
     char login[20];
     char nome[50];
-    int idade;
 } Recepcionista;
 
 typedef struct {
@@ -288,14 +285,12 @@ void jsonParaStructs() {
             
             cJSON *login = cJSON_GetObjectItem(medicoItem, "login");
             cJSON *nome = cJSON_GetObjectItem(medicoItem, "nome");
-            cJSON *idade = cJSON_GetObjectItem(medicoItem, "idade");
             cJSON *especialidade = cJSON_GetObjectItem(medicoItem, "especialidade");
             cJSON *crm = cJSON_GetObjectItem(medicoItem, "crm");
             
-            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(especialidade) && cJSON_IsString(crm)) {
+            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsString(especialidade) && cJSON_IsString(crm)) {
                 strcpy(medicosSistema[totalMedicos].login, login->valuestring);
                 strcpy(medicosSistema[totalMedicos].nome, nome->valuestring);
-                medicosSistema[totalMedicos].idade = idade->valueint;
                 strcpy(medicosSistema[totalMedicos].especialidade, especialidade->valuestring);
                 strcpy(medicosSistema[totalMedicos].crm, crm->valuestring);
                 totalMedicos++;
@@ -325,14 +320,12 @@ void jsonParaStructs() {
             
             cJSON *login = cJSON_GetObjectItem(enfermeiroItem, "login");
             cJSON *nome = cJSON_GetObjectItem(enfermeiroItem, "nome");
-            cJSON *idade = cJSON_GetObjectItem(enfermeiroItem, "idade");
             cJSON *especialidade = cJSON_GetObjectItem(enfermeiroItem, "especialidade");
             cJSON *coren = cJSON_GetObjectItem(enfermeiroItem, "coren");
             
-            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsNumber(idade) && cJSON_IsString(especialidade) && cJSON_IsString(coren)) {
+            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsString(especialidade) && cJSON_IsString(coren)) {
                 strcpy(enfermeirosSistema[totalEnfermeiros].login, login->valuestring);
                 strcpy(enfermeirosSistema[totalEnfermeiros].nome, nome->valuestring);
-                enfermeirosSistema[totalEnfermeiros].idade = idade->valueint;
                 strcpy(enfermeirosSistema[totalEnfermeiros].especialidade, especialidade->valuestring);
                 strcpy(enfermeirosSistema[totalEnfermeiros].coren, coren->valuestring);
                 totalEnfermeiros++;
@@ -362,12 +355,10 @@ void jsonParaStructs() {
             
             cJSON *login = cJSON_GetObjectItem(recepcionistasItem, "login");
             cJSON *nome = cJSON_GetObjectItem(recepcionistasItem, "nome");
-            cJSON *idade = cJSON_GetObjectItem(recepcionistasItem, "idade");
             
-            if (cJSON_IsString(login) && cJSON_IsString(nome) && cJSON_IsNumber(idade)) {
+            if (cJSON_IsString(login) && cJSON_IsString(nome)) {
                 strcpy(recepcionistasSistema[totalRecepcionistas].login, login->valuestring);
                 strcpy(recepcionistasSistema[totalRecepcionistas].nome, nome->valuestring);
-                recepcionistasSistema[totalRecepcionistas].idade = idade->valueint;
                 totalRecepcionistas++;
             }
         }
@@ -606,8 +597,6 @@ void cadastrarMedico() {
         printf("\n --- Cadastrando Médico(a) %d de %d ---",i+1,qtd_de_medicos);
         printf("\nInsira o Nome do Médico(a): ");
         scanf(" %[^\n]", medicosSistema[totalMedicos].nome);
-        printf("\nInsira a Idade do Médico(a): ");
-        scanf("%d", &medicosSistema[totalMedicos].idade);
         printf("\nInsira a Especialidade do Médico(a): ");
         scanf(" %[^\n]", medicosSistema[totalMedicos].especialidade);
         printf("\nInsira o CRM do Médico(a): ");
@@ -638,7 +627,6 @@ void cadastrarMedico() {
         // Objeto do Medico
         cJSON_AddStringToObject(novoMedico, "login", medicosSistema[totalMedicos].login);
         cJSON_AddStringToObject(novoMedico, "nome", medicosSistema[totalMedicos].nome);
-        cJSON_AddNumberToObject(novoMedico, "idade", medicosSistema[totalMedicos].idade);
         cJSON_AddStringToObject(novoMedico, "especialidade", medicosSistema[totalMedicos].especialidade);
         cJSON_AddStringToObject(novoMedico, "crm", medicosSistema[totalMedicos].crm);
 
@@ -724,8 +712,6 @@ void cadastrarEnfermeiro() {
         printf("\n --- Cadastrando Enfermeiro(a) %d de %d ---",i+1,qtd_de_enfermeiros);
         printf("\nInsira o Nome do Enfermeiro(a): ");
         scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].nome);
-        printf("\nInsira a Idade do Enfermeiro(a): ");
-        scanf("%d", &enfermeirosSistema[totalEnfermeiros].idade);
         printf("\nInsira a Especialidade do Enfermeiro(a): ");
         scanf(" %[^\n]", enfermeirosSistema[totalEnfermeiros].especialidade);
         printf("\nInsira o Coren do Enfermeiro(a): ");
@@ -749,14 +735,13 @@ void cadastrarEnfermeiro() {
         }
 
         strcpy(usuariosSistema[totalUsuarios].login, enfermeirosSistema[totalEnfermeiros].login);
-        printf("\nInsira a Senha do Usuário do Médico(a): ");
+        printf("\nInsira a Senha do Usuário do Enfermeiro(a): ");
         scanf(" %[^\n]", usuariosSistema[totalUsuarios].senha);
         strcpy(usuariosSistema[totalUsuarios].tipo, "enfermeiro");
 
         // Objeto do Enfermeiro
         cJSON_AddStringToObject(novoEnfermeiro, "login", enfermeirosSistema[totalEnfermeiros].login);
         cJSON_AddStringToObject(novoEnfermeiro, "nome", enfermeirosSistema[totalEnfermeiros].nome);
-        cJSON_AddNumberToObject(novoEnfermeiro, "idade", enfermeirosSistema[totalEnfermeiros].idade);
         cJSON_AddStringToObject(novoEnfermeiro, "especialidade", enfermeirosSistema[totalEnfermeiros].especialidade);
         cJSON_AddStringToObject(novoEnfermeiro, "coren", enfermeirosSistema[totalEnfermeiros].coren);
 
@@ -842,8 +827,6 @@ void cadastrarRecepcionista() {
         printf("\n --- Cadastrando Recepcionista %d de %d ---",i+1,qtd_de_recepcionistas);
         printf("\nInsira o Nome do Recepcionista: ");
         scanf(" %[^\n]", recepcionistasSistema[totalRecepcionistas].nome);
-        printf("\nInsira a Idade do Recepcionista: ");
-        scanf("%d", &recepcionistasSistema[totalRecepcionistas].idade);
 
         while (1) {
             int repetido = false;
@@ -870,7 +853,6 @@ void cadastrarRecepcionista() {
         // Objeto do Recepcionista
         cJSON_AddStringToObject(novoRecepcionista, "login", recepcionistasSistema[totalRecepcionistas].login);
         cJSON_AddStringToObject(novoRecepcionista, "nome", recepcionistasSistema[totalRecepcionistas].nome);
-        cJSON_AddNumberToObject(novoRecepcionista, "idade", recepcionistasSistema[totalRecepcionistas].idade);
 
         // Objeto do Usuário
         cJSON_AddStringToObject(novoUsuario, "login", usuariosSistema[totalUsuarios].login);
@@ -1401,7 +1383,6 @@ void verUsuarios() {
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", medicosSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",medicosSistema[indiceVisualizar].nome);
-        printf("Idade        : %d\n",medicosSistema[indiceVisualizar].idade);
         printf("Especialidade: %s\n",medicosSistema[indiceVisualizar].especialidade);
         printf("CRM          : %s\n",medicosSistema[indiceVisualizar].crm);
         printf(" --> Médico(a)\n\n");
@@ -1418,9 +1399,8 @@ void verUsuarios() {
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", enfermeirosSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",enfermeirosSistema[indiceVisualizar].nome);
-        printf("Idade        : %d\n",enfermeirosSistema[indiceVisualizar].idade);
         printf("Especialidade: %s\n",enfermeirosSistema[indiceVisualizar].especialidade);
-        printf("CRM          : %s\n",enfermeirosSistema[indiceVisualizar].coren);
+        printf("Coren        : %s\n",enfermeirosSistema[indiceVisualizar].coren);
         printf(" --> Enfermeiro(a)\n\n");
     } else if (strcmp(visualizarTipo, "recepcionista") == 0) {
         for (int i=0;i<totalRecepcionistas;i++) {
@@ -1435,7 +1415,6 @@ void verUsuarios() {
         printf(" ---> VER DADOS DE UM USUÁRIO <---\n");
         printf(" - Dados do usuário %s:\n", recepcionistasSistema[indiceVisualizar].login);
         printf("Nome         : %s\n",recepcionistasSistema[indiceVisualizar].nome);
-        printf("Idade        : %d\n",recepcionistasSistema[indiceVisualizar].idade);
         printf(" --> Recepcionista\n\n");
     }
     
@@ -2303,24 +2282,39 @@ void desalocarPacienteDoLeito() {
     }
     indicePacienteEscolhido -= 1;
 
+    // Encontra o índice real do paciente no array pacientesSistema
+    int indicePacienteReal = -1;
     for (int i = 0; i < totalPacientes; i++) {
-        if (strcmp(totalPacientesAlocados[indicePacienteEscolhido], pacientesSistema[i].nome) == 0) {
-            indicePacienteEscolhido = i;
+        if (strcmp(pacientesSistema[i].nome, totalPacientesAlocados[indicePacienteEscolhido]) == 0) {
+            indicePacienteReal = i;
             break;
         }
     }
 
-    int indiceLeitoPaciente;
+    if (indicePacienteReal == -1) {
+        printf("Erro: Paciente não encontrado!\n");
+        system("pause");
+        return;
+    }
+
+    // Encontra o leito onde o paciente está alocado
+    int indiceLeitoReal = -1;
     for (int i = 0; i < totalLeitos; i++) {
-        if (strcmp(totalPacientesAlocados[indicePacienteEscolhido], leitosSistema[i].paciente) == 0) {
-            indiceLeitoPaciente = i;
+        if (strcmp(leitosSistema[i].paciente, pacientesSistema[indicePacienteReal].nome) == 0) {
+            indiceLeitoReal = i;
             break;
         }
+    }
+
+    if (indiceLeitoReal == -1) {
+        printf("Erro: Leito não encontrado para este paciente!\n");
+        system("pause");
+        return;
     }
 
     // Atualiza na memória
-    strcpy(leitosSistema[indiceLeitoPaciente].paciente, "vazio");
-    pacientesSistema[indicePacienteEscolhido].alocadoLeito = false;
+    strcpy(leitosSistema[indiceLeitoReal].paciente, "vazio");
+    pacientesSistema[indicePacienteReal].alocadoLeito = false;
 
     // --- Atualiza no JSON ---
     FILE *file = fopen("informacoes.json", "r");
@@ -2347,32 +2341,49 @@ void desalocarPacienteDoLeito() {
         return;
     }
 
-    // ---------- Atualiza o campo do leito ----------
+    // ---------- CORREÇÃO: Atualiza o campo do leito ----------
     cJSON *leitosArray = cJSON_GetObjectItem(root, "leitos");
     if (leitosArray && cJSON_IsArray(leitosArray)) {
-        cJSON *leito = cJSON_GetArrayItem(leitosArray, indiceLeitoPaciente);
-        if (leito) {
-            cJSON *pacienteLeito = cJSON_GetObjectItem(leito, "paciente");
-            if (pacienteLeito) {
-                cJSON_SetValuestring(pacienteLeito, "vazio");
-            } else {
-                // se não existir o campo, adiciona
+        int tamanhoLeitos = cJSON_GetArraySize(leitosArray);
+        for (int i = 0; i < tamanhoLeitos; i++) {
+            cJSON *leito = cJSON_GetArrayItem(leitosArray, i);
+            cJSON *nomeLeito = cJSON_GetObjectItem(leito, "nome");
+            
+            // Procura pelo nome do leito em vez de usar índice
+            if (nomeLeito && cJSON_IsString(nomeLeito) && 
+                strcmp(nomeLeito->valuestring, leitosSistema[indiceLeitoReal].nome) == 0) {
+                
+                // Atualiza o campo paciente para "vazio"
+                cJSON *pacienteAtual = cJSON_GetObjectItem(leito, "paciente");
+                if (pacienteAtual) {
+                    // Método correto para atualizar string no cJSON
+                    cJSON_DeleteItemFromObject(leito, "paciente");
+                }
                 cJSON_AddStringToObject(leito, "paciente", "vazio");
+                break;
             }
         }
     }
 
-    // ---------- Atualiza o campo do paciente ----------
+    // ---------- CORREÇÃO: Atualiza o campo do paciente ----------
     cJSON *pacientesArray = cJSON_GetObjectItem(root, "pacientes");
     if (pacientesArray && cJSON_IsArray(pacientesArray)) {
-        cJSON *paciente = cJSON_GetArrayItem(pacientesArray, indicePacienteEscolhido);
-        if (paciente) {
-            cJSON *alocado = cJSON_GetObjectItem(paciente, "alocadoLeito");
-            if (alocado) {
-                cJSON_SetBoolValue(alocado, false);
-            } else {
-                // se não existir, adiciona
+        int tamanhoPacientes = cJSON_GetArraySize(pacientesArray);
+        for (int i = 0; i < tamanhoPacientes; i++) {
+            cJSON *paciente = cJSON_GetArrayItem(pacientesArray, i);
+            cJSON *nomePaciente = cJSON_GetObjectItem(paciente, "nome");
+            
+            // Procura pelo nome do paciente em vez de usar índice
+            if (nomePaciente && cJSON_IsString(nomePaciente) && 
+                strcmp(nomePaciente->valuestring, pacientesSistema[indicePacienteReal].nome) == 0) {
+                
+                // Atualiza o campo alocadoLeito para false
+                cJSON *alocadoAtual = cJSON_GetObjectItem(paciente, "alocadoLeito");
+                if (alocadoAtual) {
+                    cJSON_DeleteItemFromObject(paciente, "alocadoLeito");
+                }
                 cJSON_AddBoolToObject(paciente, "alocadoLeito", false);
+                break;
             }
         }
     }
@@ -2392,12 +2403,12 @@ void desalocarPacienteDoLeito() {
     free(novoJson);
     cJSON_Delete(root);
 
-
     printf(" [---------------- %s ----------------]\n\n", titulo);
     printf(" ---> DESALOCAR PACIENTE DO LEITO <---\n");
-    printf("\nPaciente desalocado com sucesso!\n\n");
+    printf("\nPaciente %s desalocado do leito %s com sucesso!\n\n", 
+           pacientesSistema[indicePacienteReal].nome, 
+           leitosSistema[indiceLeitoReal].nome);
     system("pause");
-
 }
 
 //--------------------------- Exclusivo do Médico ---------------------------
@@ -2452,7 +2463,7 @@ void menuMEDICO() {
         printf(" [---------------- %s ----------------]\n\n", titulo);
         printf(" ---> MENU MÉDICO(A) <---\n");
         printf(" 1- Ver Pacientes\n");
-        printf(" 2- Ver Leitos\n");
+        printf(" 2- Ver situação dos Leitos\n");
         printf(" 3- Dar Alta\n");
         printf(" 0- Sair\n");
         printf("\n Digite a opção: ");
@@ -2557,7 +2568,7 @@ int main() {
     SetConsoleCP(65001);
     setlocale(LC_ALL, "Portuguese_Brazil.65001");
     
-    system("title SISTEMA HOSPITALAR");
+    system("title Sistema de Gestão de Leitos");
     system("mode con: cols=120 lines=30");
     system("color 0F");
         
