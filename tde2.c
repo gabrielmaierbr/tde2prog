@@ -1436,6 +1436,7 @@ void gerenciarPacientes() {
         printf(" 1- Cadastrar Paciente\n");
         printf(" 2- Excluir Paciente\n");
         printf(" 3- Ver Pacientes\n");
+        printf(" 4- Dar Alta\n");
         printf(" 0- Voltar\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
@@ -1446,6 +1447,8 @@ void gerenciarPacientes() {
             excluirPaciente();
         } else if (opcao==3) {
             verPacientes();
+        } else if (opcao==4) {
+            darAlta();
         } else if (opcao==0) {
             break;
         } else {
@@ -1742,7 +1745,6 @@ void gerenciarLeitos() {
         printf(" 2- Excluir Leito\n");
         printf(" 3- Ver situação dos Leitos\n");
         printf(" 4- Gerenciar Pecientes nos Leitos\n");
-        printf(" 5- Dar alta\n");
         printf(" 0- Voltar\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
@@ -1755,8 +1757,6 @@ void gerenciarLeitos() {
             verLeitos();
         } else if (opcao==4) {
             gerenciarPacientesNosLeitos();
-        } else if (opcao==5) {
-            darAlta();
         } else if (opcao==0) {
             break;
         } else {

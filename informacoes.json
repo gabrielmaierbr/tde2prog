@@ -1,0 +1,12 @@
+{
+	"usuarios":	[{
+			"login":	"admin",
+			"senha":	"adm123",
+			"tipo":	"admin"
+		}],
+	"medicos":	[],
+	"enfermeiros":	[],
+	"recepcionistas":	[],
+	"pacientes":	[],
+	"leitos":	[]
+}
