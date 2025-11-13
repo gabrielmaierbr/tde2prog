@@ -1424,6 +1424,7 @@ void verUsuarios() {
     verUsuarios();
 
 }
+
 //--------------------------- Gerenciar Pacientes ---------------------------
 
 void gerenciarPacientes() {
@@ -1741,6 +1742,7 @@ void gerenciarLeitos() {
         printf(" 2- Excluir Leito\n");
         printf(" 3- Ver situação dos Leitos\n");
         printf(" 4- Gerenciar Pecientes nos Leitos\n");
+        printf(" 5- Dar alta\n");
         printf(" 0- Voltar\n");
         printf("\n Digite a opção: ");
         scanf("%d",&opcao);
@@ -1753,6 +1755,8 @@ void gerenciarLeitos() {
             verLeitos();
         } else if (opcao==4) {
             gerenciarPacientesNosLeitos();
+        } else if (opcao==5) {
+            darAlta();
         } else if (opcao==0) {
             break;
         } else {
@@ -2422,7 +2426,7 @@ void desalocarPacienteDoLeito() {
     system("pause");
 }
 
-//--------------------------- Exclusivo do Médico ---------------------------
+//--------------------------- Dar Alta ---------------------------
 
 void darAlta() {
     system("cls");
@@ -2585,7 +2589,6 @@ void darAlta() {
     cJSON_Delete(root);
 
 }
-
 
 //---------------------------------- MENUS ----------------------------------
 
