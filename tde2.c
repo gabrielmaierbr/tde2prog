@@ -137,6 +137,7 @@ void credenciais() {
         
         for (int i = 0; i < totalUsuarios; i++) {
 
+            // Verifica o login e senha
             if (strcmp(login, usuariosSistema[i].login) == 0 && strcmp(senha, usuariosSistema[i].senha) == 0) {
                 
                 autenticado = 1;
@@ -1601,6 +1602,16 @@ void excluirPaciente() {
     indiceExcluir -= 1;
     char pacienteExcluir[50];
     strcpy(pacienteExcluir,pacientesSistema[indiceExcluir].nome);
+
+    for (int i=0;i<totalPacientes;i++) {
+        if (strcmp(pacientesSistema[i].nome, pacienteExcluir) == 0) {
+            if (pacientesSistema[i].alocadoLeito == true) {
+                printf("\nEsse paciente não pode ser excluído pois ele está em um leito!\n\n");
+                system("pause");
+                return;
+            }
+        }
+    }
 
     // Remove o paciente da struct pacientesSistema
     for (int i=indiceExcluir;i<totalPacientes-1;i++) {
